@@ -42,10 +42,10 @@ function AdminAuth() {
             <h2>Admin Access</h2>
             <form onSubmit={handleLogin}>
                 <input
-                    type="password"
+                    type="kovadmin"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="kovadmin"
+                    placeholder="password it's not admin ;)"
                     style={{ padding: '10px', fontSize: '1rem', marginRight: '10px' }}
                 />
                 <button type="submit" style={{ padding: '10px', fontSize: '1rem' }}>
