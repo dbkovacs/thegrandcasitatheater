@@ -8,7 +8,7 @@ const buildTimestamp = "2025-09-13 16:40 PM";
 function AdminAuth() {
     // --- IMPORTANT ---
     // Change your password here.
-    const CORRECT_PASSWORD = 'your_password_here';
+    const CORRECT_PASSWORD = 'kovadmin';
 
     // Check sessionStorage to see if user is already logged in for this session
     const [isAuthenticated, setIsAuthenticated] = useState(
@@ -42,10 +42,10 @@ function AdminAuth() {
             <h2>Admin Access</h2>
             <form onSubmit={handleLogin}>
                 <input
-                    type="kovadmin"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="password it's not admin ;)"
+                    placeholder="Enter password"
                     style={{ padding: '10px', fontSize: '1rem', marginRight: '10px' }}
                 />
                 <button type="submit" style={{ padding: '10px', fontSize: '1rem' }}>
