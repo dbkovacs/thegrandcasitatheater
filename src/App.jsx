@@ -3,9 +3,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SignUpPage from './SignUpPage';
 import AdminPage from './AdminPage';
-import ShowingsPage from './ShowingsPage'; // 1. Import the new page
+import ShowingsPage from './ShowingsPage';
+import AdminAuth from './AdminAuth'; // 1. Import the new auth component
 
-const buildTimestamp = "2025-09-13 14:31 PM";
+const buildTimestamp = "2025-09-13 16:40 PM";
 
 function HomePage() {
     return (
@@ -13,7 +14,6 @@ function HomePage() {
             <h1>The Grand Casita Theater</h1>
             <nav>
                 <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {/* 2. Add the new navigation link */}
                     <li style={{ marginBottom: '1rem' }}>
                         <Link to="/showings">-- Coming Soon & History --</Link>
                     </li>
@@ -38,12 +38,13 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pick-a-movie" element={<SignUpPage />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/showings" element={<ShowingsPage />} /> {/* 3. Add the new route */}
+                {/* 2. Use AdminAuth as the element for the /admin route */}
+                <Route path="/admin" element={<AdminAuth />} />
+                <Route path="/showings" element={<ShowingsPage />} />
             </Routes>
         </Router>
     );
 }
 
 export default App;
-// END - 2025-09-13 14:31 PM
+// END - 2025-09-13 16:44 PM
