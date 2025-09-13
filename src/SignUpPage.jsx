@@ -1,7 +1,7 @@
 // File: src/SignUpPage.jsx
 // This component contains the form for users to sign up to host a movie night.
-import React, from 'react';
-import { db } from './firebase.js'; // Import the database connection
+import React, { useState } from 'react';
+import { db } from './firebase'; // Import the database connection
 import { collection, addDoc } from 'firebase/firestore';
 
 const SignUpPage = () => {
