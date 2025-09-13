@@ -3,19 +3,18 @@ import React, { useState } from 'react';
 import { db } from './firebase.js';
 import { collection, addDoc } from "firebase/firestore";
 
-const buildTimestamp = "2025-09-13 14:11 PM";
+const buildTimestamp = "2025-09-13 14:22 PM";
 
 function SignUpPage() {
     const [hostName, setHostName] = useState('');
     const [movieTitle, setMovieTitle] = useState('');
-    const [eventDate, setEventDate] = useState('');
     const [thermostat, setThermostat] = useState(70);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!hostName || !movieTitle || !eventDate) {
+        if (!hostName || !movieTitle) {
             setMessage('Please fill out all fields.');
             return;
         }
@@ -26,7 +25,6 @@ function SignUpPage() {
             await addDoc(collection(db, "movieNights"), {
                 hostName: hostName,
                 movieTitle: movieTitle,
-                eventDate: eventDate,
                 thermostat: Number(thermostat),
                 status: 'Pending Review',
                 submittedAt: new Date()
@@ -35,7 +33,6 @@ function SignUpPage() {
             setMessage('Success! Your movie night has been submitted for review.');
             setHostName('');
             setMovieTitle('');
-            setEventDate('');
             setThermostat(70);
         } catch (error) {
             console.error("Error adding document: ", error);
@@ -48,19 +45,15 @@ function SignUpPage() {
     return (
         <div style={{ fontFamily: 'sans-serif', padding: '2rem', maxWidth: '600px', margin: 'auto' }}>
             <h1>Host a Movie Night</h1>
-            <p>Pick a movie and a date, and we'll handle the rest!</p>
+            <p>Pick a movie and we'll handle the rest!</p>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                     <label htmlFor="hostName">Your Name</label>
-                    <input type="text" id="hostName" value={hostName} onChange={(e) => setHostName(e.target.value)} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} placeholder="e.g., Jane Doe" />
+                    <input type="text" id="hostName" value={hostName} onChange={(e) => setHostName(e.target.value)} required style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} placeholder="e.g., Jane Doe" />
                 </div>
                 <div>
                     <label htmlFor="movieTitle">Movie Title</label>
-                    <input type="text" id="movieTitle" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} placeholder="e.g., The Princess Bride" />
-                </div>
-                <div>
-                    <label htmlFor="eventDate">Preferred Date</label>
-                    <input type="date" id="eventDate" value={eventDate} onChange={(e) => setEventDate(e.target.value)} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
+                    <input type="text" id="movieTitle" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} required style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} placeholder="e.g., The Princess Bride" />
                 </div>
                 <div>
                     <label htmlFor="thermostat">Preferred Temp: {thermostat}°F</label>
@@ -79,4 +72,4 @@ function SignUpPage() {
 }
 
 export default SignUpPage;
-// END - 2025-09-13 14:11 PM
+// END - 2025-09-13 14:22 PM
