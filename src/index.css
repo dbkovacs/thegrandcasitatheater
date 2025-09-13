@@ -13,95 +13,114 @@
 body {
   margin: 0;
   font-family: var(--font-body);
-  /* --- NEW BACKGROUND --- */
-  background-color: #1a1a1a; /* Fallback color */
-  background-image: linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.7)), url('https://images.unsplash.com/photo-1542210592-39a1a8a4f5b3'); /* !!! REPLACE THIS URL !!! */
-  background-size: cover;
-  background-position: center;
+  background-color: var(--color-bronze); /* Fallback color */
+  color: var(--color-limestone);
+}
+
+.site-wrapper {
+  background-image: url('!!! PASTE YOUR WALL-TEXTURE.JPG URL HERE !!!'); /* !!! REPLACE THIS !!! */
   background-attachment: fixed;
-  
-  color: var(--color-limestone); /* New default text color for dark background */
+  background-size: cover;
 }
 
-a {
-  color: var(--color-terracotta);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease-in-out;
-}
-a:hover {
-  color: var(--color-gold);
+.site-header, .site-footer {
+  background-image: url('!!! PASTE YOUR CEILING-TEXTURE.JPG URL HERE !!!'); /* !!! REPLACE THIS !!! */
+  background-size: 300px; /* Adjust size of the repeating pattern */
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  border-bottom: 2px solid var(--color-gold);
+  border-top: 2px solid var(--color-gold);
 }
 
-/* New class for the main content container */
-.home-container {
+.site-header h1 {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
   text-align: center;
-  padding: 2rem;
+  margin: 1rem 0;
+}
+
+.home-container {
+  padding: 4rem 2rem;
   max-width: 1000px;
   margin: 0 auto;
 }
 
-/* New styles for the header */
-.home-header {
-  font-family: var(--font-heading);
-  font-size: 3.5rem;
-  color: #fff;
-  text-shadow: 0 2px 15px rgba(0,0,0,0.5);
-  margin-bottom: 3rem;
-}
-
-/* New two-column layout for the active movie */
-.active-movie-layout {
+.active-movie-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3rem;
-  text-align: left;
-  background-color: rgba(0,0,0,0.4);
-  padding: 2rem;
+  text-align: center;
+  gap: 2rem;
+  background-color: rgba(40, 30, 20, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 2.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(212, 175, 55, 0.5); /* Gold border */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.poster-column {
-  flex-shrink: 0;
+@media (min-width: 768px) {
+  .active-movie-card {
+    flex-direction: row;
+    text-align: left;
+  }
 }
+
 .poster-column img {
   width: 300px;
   border-radius: 8px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+  flex-shrink: 0;
 }
 
 .details-column h2 {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--color-gold);
+  text-shadow: 0 0 10px var(--color-gold);
 }
 
-/* Navigation Styles */
+.details-column h3 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 1rem 0;
+}
+
 .home-nav {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 1rem;
   list-style: none;
   padding: 0;
   margin-top: 3rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
 .home-nav a {
-  color: #fff;
-  background-color: var(--color-terracotta);
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  transition: all 0.2s ease-in-out;
+    color: var(--color-bronze);
+    background: linear-gradient(145deg, #f0c353, #d4af37);
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), 0 2px 3px rgba(0,0,0,0.3);
+    border: 1px solid #a38521;
 }
 
 .home-nav a:hover {
-  background-color: var(--color-gold);
-  color: var(--color-bronze);
+  background: linear-gradient(145deg, #ffdb7d, #f0c353);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 4px 6px rgba(0,0,0,0.4);
+}
+
+.site-footer {
+  text-align: center;
+  padding: 2rem;
+  margin-top: 4rem;
+  font-size: 0.9rem;
 }
 
 .admin-link a {
