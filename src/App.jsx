@@ -1,24 +1,21 @@
-// Main application component with simple routing
+// File: src/App.jsx
+// This is the main application component. It handles routing to display the correct page.
 // NOTE: All page components are temporarily in this file to resolve a build issue.
-// We will separate them into their own files in a later step.
-import React, { useState, useEffect } from 'react';
+import React, 'react';
 
-// --- Page Components ---
+// --- Page Components (temporary location) ---
+
+const SignUpPage = () => (
+    <div className="text-center p-8">
+        <h1 className="text-4xl font-cinzel mb-4">Pick a Movie</h1>
+        <p>The form to sign up to host a movie will be built here.</p>
+    </div>
+);
 
 const AdminPage = () => (
-    <div className="container mx-auto p-8">
-        <h1 className="text-4xl font-cinzel text-brand-gold mb-8 text-center">Admin Dashboard</h1>
-        <div className="bg-brand-card p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-cinzel mb-4">Pending Movie Nights</h2>
-            <p className="text-gray-400">No pending movie nights.</p>
-        </div>
-        <div className="mt-8 bg-brand-card p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-cinzel mb-4">Add Movie Poster</h2>
-            <div className="border-4 border-dashed border-gray-600 rounded-lg p-12 text-center cursor-pointer hover:border-brand-gold hover:bg-gray-800 transition-colors">
-                <p className="text-gray-400">Drag & Drop Image File Here</p>
-                <p className="text-sm text-gray-500 mt-2">or click to select a file</p>
-            </div>
-        </div>
+    <div className="text-center p-8">
+        <h1 className="text-4xl font-cinzel mb-4">Admin Page</h1>
+        <p>The admin dashboard will be built here.</p>
     </div>
 );
 
@@ -29,26 +26,17 @@ const InvitationPage = () => (
     </div>
 );
 
-const SignUpPage = () => (
-    <div className="text-center p-8">
-        <h1 className="text-4xl font-cinzel mb-4">Pick a Movie</h1>
-        <p>The form to sign up to host a movie will be built here.</p>
-    </div>
-);
-
-
 // --- Main App ---
 
 function App() {
-    const [currentPage, setCurrentPage] = useState('/');
+    const [currentPage, setCurrentPage] = React.useState('/');
 
-    useEffect(() => {
+    React.useEffect(() => {
         const handleHashChange = () => {
-            // Use '#' for the root, and include hash for others
             setCurrentPage(window.location.hash || '#');
         };
         window.addEventListener('hashchange', handleHashChange);
-        handleHashChange(); // Set initial page
+        handleHashChange();
         return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
