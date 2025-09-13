@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // NEW: Import Storage functions
 
 function AdminPage() {
     const [pendingMovies, setPendingMovies] = useState([]);
@@ -12,7 +13,8 @@ function AdminPage() {
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [showDate, setShowDate] = useState('');
     const [trailerLink, setTrailerLink] = useState('');
-    const [posterFile, setPosterFile] = useState(null); // File object state
+    const [posterFile, setPosterFile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false); // NEW: To disable button during upload
 
     // Function to fetch pending movies from Firestore
     const fetchPendingMovies = async () => {
@@ -31,15 +33,12 @@ function AdminPage() {
         }
     };
 
-    // Fetch movies when the component mounts
     useEffect(() => {
         fetchPendingMovies();
     }, []);
 
-    // Handler to select a movie and pre-fill the form
     const handleSelectMovie = (movie) => {
         setSelectedMovie(movie);
-        // Pre-fill date from user's request if available
         setShowDate(movie.eventDate || '');
         setTrailerLink('');
         setPosterFile(null);
@@ -48,33 +47,42 @@ function AdminPage() {
     // Handler for the final approval submission
     const handleApproveSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedMovie || !showDate) {
-            alert('Please assign a show date.');
+        if (!selectedMovie || !showDate || !posterFile) {
+            alert('Please assign a show date and select a poster image.');
             return;
         }
-
-        // **NOTE: File upload logic will be added in the next step.**
-        // For now, we will just update the Firestore document.
-        console.log('Selected poster file:', posterFile); // We'll use this file later
+        setIsSubmitting(true);
 
         try {
+            // 1. Upload the image to Firebase Storage
+            const storage = getStorage();
+            // Create a unique file name to avoid overwriting files
+            const posterRef = ref(storage, `posters/${Date.now()}_${posterFile.name}`);
+            const snapshot = await uploadBytes(posterRef, posterFile);
+            
+            // 2. Get the public URL of the uploaded image
+            const posterUrl = await getDownloadURL(snapshot.ref);
+
+            // 3. Update the Firestore document with the new URL and data
             const movieDocRef = doc(db, 'movieNights', selectedMovie.id);
             await updateDoc(movieDocRef, {
                 status: 'Approved',
                 showDate: showDate,
                 trailerLink: trailerLink,
-                // posterUrl: 'URL_FROM_UPLOAD' // This will be added later
+                posterUrl: posterUrl // NEW: Save the image URL
             });
 
-            alert(`'${selectedMovie.movieTitle}' has been approved!`);
+            alert(`'${selectedMovie.movieTitle}' has been approved and the poster has been uploaded!`);
             
             // Reset form and refresh list
             setSelectedMovie(null);
             fetchPendingMovies();
 
         } catch (err) {
-            console.error("Error updating document: ", err);
-            alert('Failed to approve movie.');
+            console.error("Error during approval process: ", err);
+            alert('An error occurred. Failed to approve movie.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -144,17 +152,18 @@ function AdminPage() {
                                 id="posterFile"
                                 onChange={(e) => setPosterFile(e.target.files[0])}
                                 accept="image/png, image/jpeg"
+                                required
                                 style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
                             />
-                            <small>Note: Poster upload functionality will be connected next.</small>
                         </div>
 
                         {/* Action Buttons */}
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                            <button type="submit" style={{ padding: '0.75rem 1.5rem', border: 'none', backgroundColor: '#28a745', color: 'white', cursor: 'pointer', borderRadius: '4px' }}>
-                                Save and Approve
+                            <button type="submit" disabled={isSubmitting} style={{ padding: '0.75rem 1.5rem', border: 'none', backgroundColor: '#28a745', color: 'white', cursor: 'pointer', borderRadius: '4px', opacity: isSubmitting ? 0.6 : 1 }}>
+                                {isSubmitting ? 'Uploading...' : 'Save and Approve'}
                             </button>
                             <button type="button" onClick={() => setSelectedMovie(null)} style={{ padding: '0.75rem 1.5rem', border: 'none', backgroundColor: '#6c757d', color: 'white', cursor: 'pointer', borderRadius: '4px' }}>
+
                                 Cancel
                             </button>
                         </div>
@@ -166,4 +175,4 @@ function AdminPage() {
 }
 
 export default AdminPage;
-// END - 2025-09-13 13:29 PM
+// END - 2025-09-13 13:35 PM
