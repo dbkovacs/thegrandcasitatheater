@@ -42,17 +42,11 @@ function AdminPage() {
         setPosterFile(null);
     };
 
-    // --- MODIFIED FUNCTION ---
     const handleApproveSubmit = async (e) => {
         e.preventDefault();
         
-        // NEW: Add a log to see the state right before validation
-        console.log('Submitting with these values:', {
-            showDate: showDate,
-            posterFile: posterFile
-        });
+        console.log('Submitting with these values:', { showDate, posterFile });
 
-        // NEW: More specific validation alerts
         if (!showDate) {
             alert('Validation Failed: Please make sure to assign a show date.');
             return;
@@ -78,7 +72,7 @@ function AdminPage() {
                 posterUrl: posterUrl
             });
 
-            alert(`'${selectedMovie.movieTitle}' has been approved!`);
+            alert(`'${selectedMovie.movieTitle}' has been approved and the poster has been uploaded!`);
             
             setSelectedMovie(null);
             fetchPendingMovies();
@@ -169,4 +163,4 @@ function AdminPage() {
 }
 
 export default AdminPage;
-// END - 2025-09-13 13:52 PM
+// END - 2025-09-13 14:03 PM
