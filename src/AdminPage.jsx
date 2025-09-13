@@ -2,21 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // NEW: Import Storage functions
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 function AdminPage() {
     const [pendingMovies, setPendingMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // State for the movie being edited
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [showDate, setShowDate] = useState('');
     const [trailerLink, setTrailerLink] = useState('');
     const [posterFile, setPosterFile] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false); // NEW: To disable button during upload
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Function to fetch pending movies from Firestore
     const fetchPendingMovies = async () => {
         setIsLoading(true);
         try {
@@ -44,37 +42,44 @@ function AdminPage() {
         setPosterFile(null);
     };
 
-    // Handler for the final approval submission
+    // --- MODIFIED FUNCTION ---
     const handleApproveSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedMovie || !showDate || !posterFile) {
-            alert('Please assign a show date and select a poster image.');
+        
+        // NEW: Add a log to see the state right before validation
+        console.log('Submitting with these values:', {
+            showDate: showDate,
+            posterFile: posterFile
+        });
+
+        // NEW: More specific validation alerts
+        if (!showDate) {
+            alert('Validation Failed: Please make sure to assign a show date.');
             return;
         }
+        if (!posterFile) {
+            alert('Validation Failed: Please make sure to select a poster file.');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
-            // 1. Upload the image to Firebase Storage
             const storage = getStorage();
-            // Create a unique file name to avoid overwriting files
             const posterRef = ref(storage, `posters/${Date.now()}_${posterFile.name}`);
             const snapshot = await uploadBytes(posterRef, posterFile);
-            
-            // 2. Get the public URL of the uploaded image
             const posterUrl = await getDownloadURL(snapshot.ref);
 
-            // 3. Update the Firestore document with the new URL and data
             const movieDocRef = doc(db, 'movieNights', selectedMovie.id);
             await updateDoc(movieDocRef, {
                 status: 'Approved',
                 showDate: showDate,
                 trailerLink: trailerLink,
-                posterUrl: posterUrl // NEW: Save the image URL
+                posterUrl: posterUrl
             });
 
-            alert(`'${selectedMovie.movieTitle}' has been approved and the poster has been uploaded!`);
+            alert(`'${selectedMovie.movieTitle}' has been approved!`);
             
-            // Reset form and refresh list
             setSelectedMovie(null);
             fetchPendingMovies();
 
@@ -89,8 +94,6 @@ function AdminPage() {
     return (
         <div style={{ fontFamily: 'sans-serif', padding: '2rem', maxWidth: '800px', margin: 'auto' }}>
             <h1>Admin Dashboard</h1>
-
-            {/* Section for Pending Reviews */}
             <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
                 <h2>Pending Movie Nights ({pendingMovies.length})</h2>
                 {isLoading && <p>Loading...</p>}
@@ -113,12 +116,10 @@ function AdminPage() {
                 </ul>
             </div>
 
-            {/* Section for Editing and Approving a Selected Movie */}
             {selectedMovie && (
                 <div style={{ border: '1px solid #007bff', padding: '1rem', borderRadius: '8px', marginTop: '2rem', backgroundColor: '#f0f8ff' }}>
                     <h3>Approving: {selectedMovie.movieTitle}</h3>
                     <form onSubmit={handleApproveSubmit}>
-                        {/* Assign Date */}
                         <div style={{ marginBottom: '1rem' }}>
                             <label htmlFor="showDate" style={{ display: 'block', marginBottom: '0.5rem' }}><strong>Assign Show Date</strong></label>
                             <input
@@ -130,8 +131,6 @@ function AdminPage() {
                                 style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
                             />
                         </div>
-
-                        {/* Trailer Link */}
                         <div style={{ marginBottom: '1rem' }}>
                             <label htmlFor="trailerLink" style={{ display: 'block', marginBottom: '0.5rem' }}><strong>Movie Trailer Embed Link</strong></label>
                             <input
@@ -143,8 +142,6 @@ function AdminPage() {
                                 style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
                             />
                         </div>
-
-                        {/* Poster Upload */}
                         <div style={{ marginBottom: '1rem' }}>
                             <label htmlFor="posterFile" style={{ display: 'block', marginBottom: '0.5rem' }}><strong>Add Movie Poster</strong></label>
                             <input
@@ -156,14 +153,11 @@ function AdminPage() {
                                 style={{ padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}
                             />
                         </div>
-
-                        {/* Action Buttons */}
                         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                             <button type="submit" disabled={isSubmitting} style={{ padding: '0.75rem 1.5rem', border: 'none', backgroundColor: '#28a745', color: 'white', cursor: 'pointer', borderRadius: '4px', opacity: isSubmitting ? 0.6 : 1 }}>
                                 {isSubmitting ? 'Uploading...' : 'Save and Approve'}
                             </button>
                             <button type="button" onClick={() => setSelectedMovie(null)} style={{ padding: '0.75rem 1.5rem', border: 'none', backgroundColor: '#6c757d', color: 'white', cursor: 'pointer', borderRadius: '4px' }}>
-
                                 Cancel
                             </button>
                         </div>
@@ -175,4 +169,4 @@ function AdminPage() {
 }
 
 export default AdminPage;
-// END - 2025-09-13 13:35 PM
+// END - 2025-09-13 13:52 PM
