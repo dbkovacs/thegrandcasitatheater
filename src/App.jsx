@@ -1,5 +1,5 @@
 // File: src/App.jsx
-import React, 'useState', useEffect } from 'react';
+import React from 'react'; // Changed this line to be more explicit
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { db } from './firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -8,13 +8,14 @@ import SignUpPage from './SignUpPage';
 import AdminAuth from './AdminAuth';
 import ShowingsPage from './ShowingsPage';
 
-const buildTimestamp = "2025-09-13 17:35 PM";
+const buildTimestamp = "2025-09-13 17:35 PM"; // Keeping timestamp for consistency
 
 function HomePage() {
-  const [activeMovie, setActiveMovie] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Using React.useState and React.useEffect to be more explicit
+  const [activeMovie, setActiveMovie] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const findActiveMovie = async () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -86,9 +87,6 @@ function HomePage() {
   );
 }
 
-// ====================================================================
-// The Main App Router (No changes here)
-// ====================================================================
 function App() {
     return (
         <Router>
@@ -103,4 +101,4 @@ function App() {
 }
 
 export default App;
-// END - 2025-09-13 17:35 PM
+// END - 2025-09-13 17:38 PM
