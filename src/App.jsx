@@ -1,7 +1,7 @@
 // File: src/App.jsx
 // This is the main application component. It handles routing to display the correct page.
 // NOTE: All page components are temporarily in this file to resolve a build issue.
-import React, 'react';
+import React from 'react';
 
 // --- Page Components (temporary location) ---
 
@@ -66,4 +66,5 @@ function App() {
 }
 
 export default App;
+// END - 2025-09-12 18:14 PM
 
