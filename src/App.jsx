@@ -2,7 +2,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SignUpPage from './SignUpPage';
-import AdminPage from './AdminPage'; // Make sure you have renamed AdminPage.jsx.txt to AdminPage.jsx
+import AdminPage from './AdminPage';
+
+const buildTimestamp = "2025-09-13 14:11 PM";
 
 // This is the new simple homepage component
 function HomePage() {
@@ -19,6 +21,9 @@ function HomePage() {
                     </li>
                 </ul>
             </nav>
+            <div style={{ position: 'fixed', bottom: 0, right: 0, padding: '4px 8px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', fontSize: '10px', borderTopLeftRadius: '5px' }}>
+                Build: {buildTimestamp}
+            </div>
         </div>
     );
 }
@@ -37,4 +42,4 @@ function App() {
 }
 
 export default App;
-// END - 2025-09-13 11:55 AM
+// END - 2025-09-13 14:11 PM
