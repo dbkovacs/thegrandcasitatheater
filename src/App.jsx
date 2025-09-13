@@ -5,26 +5,36 @@ import React from 'react';
 
 // --- Page Components (temporary location) ---
 
-const SignUpPage = () => (
-    <div className="text-center p-8">
-        <h1 className="text-4xl font-cinzel mb-4">Pick a Movie</h1>
-        <p>The form to sign up to host a movie will be built here.</p>
-    </div>
-);
+const SignUpPage = () => {
+    // This component will be moved to its own file later
+    return (
+        <div className="text-center p-8">
+            <h1 className="text-4xl font-cinzel mb-4">Pick a Movie</h1>
+            <p>The form to sign up to host a movie will be built here.</p>
+        </div>
+    );
+};
 
-const AdminPage = () => (
-    <div className="text-center p-8">
-        <h1 className="text-4xl font-cinzel mb-4">Admin Page</h1>
-        <p>The admin dashboard will be built here.</p>
-    </div>
-);
+const AdminPage = () => {
+    // This component will be moved to its own file later
+    return (
+        <div className="text-center p-8">
+            <h1 className="text-4xl font-cinzel mb-4">Admin Page</h1>
+            <p>The admin dashboard will be built here.</p>
+        </div>
+    );
+};
 
-const InvitationPage = () => (
-    <div className="text-center p-8">
-        <h1 className="text-4xl font-cinzel mb-4">A Knight's Tale</h1>
-        <p>This is the main invitation page. Content will be built out here.</p>
-    </div>
-);
+const InvitationPage = () => {
+    // This component will be moved to its own file later
+    return (
+        <div className="text-center p-8">
+            <h1 className="text-4xl font-cinzel mb-4">A Knight's Tale</h1>
+            <p>This is the main invitation page. Content will be built out here.</p>
+        </div>
+    );
+};
+
 
 // --- Main App ---
 
@@ -66,5 +76,5 @@ function App() {
 }
 
 export default App;
-// END - 2025-09-12 18:14 PM
+// END - 2025-09-12 18:20 PM
 
