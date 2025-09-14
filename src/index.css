@@ -18,13 +18,13 @@ body {
 }
 
 .site-wrapper {
-  background-image: url('!!! PASTE YOUR WALL-TEXTURE.JPG URL HERE !!!'); /* !!! REPLACE THIS !!! */
+  background-image: url('/textures/wall-texture.jpg');  /* !!! REPLACE THIS !!! */
   background-attachment: fixed;
   background-size: cover;
 }
 
 .site-header, .site-footer {
-  background-image: url('!!! PASTE YOUR CEILING-TEXTURE.JPG URL HERE !!!'); /* !!! REPLACE THIS !!! */
+  background-image: url('/textures/ceiling-texture.jpg'); /* !!! REPLACE THIS !!! */
   background-size: 300px; /* Adjust size of the repeating pattern */
   padding: 1rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
