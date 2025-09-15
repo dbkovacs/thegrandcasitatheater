@@ -10,18 +10,18 @@ export interface MovieNight {
   thermostat: number;
   submittedAt: any;
   posterURL?: string; // Optional
-  trailerLink?: string; // Optional
+  trailerLink?: string; // ADDED: Optional trailer link
 }
 
-// A new blueprint for a reservation
+// A blueprint for a reservation
 export interface Reservation {
   id: string;
   name: string;
   seatIds: string[];
 }
 
-// A new blueprint for a single seat
+// A blueprint for a single seat
 export interface Seat {
-  id: string;
+  id:string;
   status: 'available' | 'reserved' | 'selected';
 }

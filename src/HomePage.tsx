@@ -1,33 +1,39 @@
 // File: src/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { MovieNight } from './types';
+import { Link } from 'react-router-dom';
 
 function HomePage() {
-    // FIX: Define the types for our state
     const [approvedMovies, setApprovedMovies] = useState<MovieNight[]>([]);
     const [activeMovie, setActiveMovie] = useState<MovieNight | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [showTrailer, setShowTrailer] = useState(false);
 
     useEffect(() => {
         const fetchAndSetMovie = async () => {
-            const q = query(collection(db, "movieNights"), where("status", "==", "Approved"));
+            const q = query(
+                collection(db, "movieNights"),
+                where("status", "==", "Approved"),
+                orderBy("showDate", "desc") // Get newest first
+            );
             const querySnapshot = await getDocs(q);
             const moviesList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
             setApprovedMovies(moviesList);
 
+            // Logic to find the currently "active" movie
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0); // Normalize to the start of the day
 
             const currentMovie = moviesList.find(movie => {
                 const showDate = new Date(`${movie.showDate}T00:00:00`);
                 const activeWindowStart = new Date(showDate);
-                activeWindowStart.setDate(showDate.getDate() - 6);
+                // The 6-day rule we agreed on
+                activeWindowStart.setDate(showDate.getDate() - 6); 
                 return today >= activeWindowStart && today <= showDate;
             });
             
-            // FIX: currentMovie can be undefined, which is fine
             setActiveMovie(currentMovie || null);
             setIsLoading(false);
         };
@@ -40,25 +46,82 @@ function HomePage() {
     }
 
     if (!activeMovie) {
-        return <div className="page-message">No movie is currently active. Check the Showings page for what's next!</div>;
+        return (
+             <div className="page-container text-center">
+                <h1 className="page-title">Upcoming Showings</h1>
+                 <p className="page-message">No movie is currently active, but here's what's coming up!</p>
+                 <div className="upcoming-list-condensed">
+                    {approvedMovies.map(movie => (
+                        <div key={movie.id} className="upcoming-item-condensed">
+                           <span className="font-bold">{movie.showDate}</span> - {movie.movieTitle}
+                        </div>
+                    ))}
+                 </div>
+            </div>
+        );
     }
 
+    // Filter out the active movie from the upcoming list
+    const upcomingMovies = approvedMovies.filter(movie => movie.id !== activeMovie.id);
+
     return (
-        <div className="active-movie-card">
-            <div className="poster-column">
-                {/* FIX: Check if posterURL exists before rendering */}
-                {activeMovie.posterURL && <img src={activeMovie.posterURL} alt={`${activeMovie.movieTitle} Poster`} />}
+        <>
+            {/* Trailer Modal */}
+            {showTrailer && activeMovie.trailerLink && (
+                <div className="trailer-modal-backdrop" onClick={() => setShowTrailer(false)}>
+                    <div className="trailer-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src={activeMovie.trailerLink}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                         <button onClick={() => setShowTrailer(false)} className="trailer-close-button">&times;</button>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Hero Section */}
+            <div className="active-movie-hero">
+                <div className="poster-column">
+                    {activeMovie.posterURL && <img src={activeMovie.posterURL} alt={`${activeMovie.movieTitle} Poster`} />}
+                </div>
+                <div className="details-column">
+                    <h2>You're Invited!</h2>
+                    <p className="host-byline">by {activeMovie.hostName}</p>
+                    <h1>{activeMovie.movieTitle}</h1>
+                    <p className="showing-on">Showing on: <strong>{activeMovie.showDate}</strong></p>
+                    
+                    <div className="cta-buttons">
+                        {activeMovie.trailerLink && (
+                             <button onClick={() => setShowTrailer(true)} className="btn-velvet">Watch Trailer</button>
+                        )}
+                        <Link to={`/reservations/${activeMovie.id}`} className="btn-velvet primary">Make a Reservation</Link>
+                    </div>
+                </div>
             </div>
-            <div className="details-column">
-                <h2>You're Invited!</h2>
-                <p style={{ fontStyle: 'italic', marginTop: '-1rem' }}>by {activeMovie.hostName}</p>
-                <h3>{activeMovie.movieTitle}</h3>
-                <p>Showing on: <strong>{activeMovie.showDate}</strong></p>
-                <p style={{ borderLeft: `3px solid var(--color-gold)`, paddingLeft: '1rem', fontStyle: 'italic' }}>
-                    "This will be a great night! Can't wait to see everyone there for this classic film."
-                </p>
-            </div>
-        </div>
+            
+            {/* Upcoming List Section */}
+            {upcomingMovies.length > 0 && (
+                <div className="upcoming-section">
+                    <h2>Also Coming Soon...</h2>
+                    <div className="upcoming-list">
+                       {upcomingMovies.map(movie => (
+                           <div key={movie.id} className="upcoming-item">
+                                {movie.posterURL && <img src={movie.posterURL} alt={movie.movieTitle} />}
+                                <div className="upcoming-details">
+                                   <strong>{movie.showDate}</strong>
+                                   <p>{movie.movieTitle}</p>
+                                </div>
+                           </div>
+                       ))}
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
 
