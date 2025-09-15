@@ -1,25 +1,24 @@
-// File: src/AdminPage.jsx
-// This component is the admin dashboard for viewing, approving, and managing movie nights.
+// File: src/AdminPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { db, storage } from './firebase.js';
+import { db, storage } from './firebase';
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { MovieNight } from './types'; // Import our blueprint
 
 function AdminPage() {
-    // State for different sections
-    const [pendingMovies, setPendingMovies] = useState([]);
-    const [approvedMovies, setApprovedMovies] = useState([]);
+    // FIX: Apply the MovieNight blueprint to our state
+    const [pendingMovies, setPendingMovies] = useState<MovieNight[]>([]);
+    const [approvedMovies, setApprovedMovies] = useState<MovieNight[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
-    // State for the uploader
-    const [selectedMovieId, setSelectedMovieId] = useState(null);
-    const [selectedFile, setSelectedFile] = useState(null);
+    // FIX: Define types for uploader state
+    const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
 
-    // Fetch both pending and approved movies
     useEffect(() => {
         const fetchMovies = async () => {
             setLoading(true);
@@ -29,8 +28,8 @@ function AdminPage() {
 
                 const [pendingSnapshot, approvedSnapshot] = await Promise.all([getDocs(pendingQuery), getDocs(approvedQuery)]);
 
-                const pendingList = pendingSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const approvedList = approvedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const pendingList = pendingSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
+                const approvedList = approvedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
 
                 setPendingMovies(pendingList);
                 setApprovedMovies(approvedList);
@@ -45,14 +44,13 @@ function AdminPage() {
         fetchMovies();
     }, []);
 
-    // ... (handleApprove function remains the same as before)
-    const handleApprove = async (movieId) => {
-        // ... Logic from previous step ...
-        // For brevity, this is omitted but should be kept in your file
+    // FIX: Add type for the movieId parameter
+    const handleApprove = async (movieId: string) => {
+        /* Your approve logic here */
     };
     
-    // --- Uploader Logic ---
-    const onDrop = useCallback(acceptedFiles => {
+    // FIX: Add type for the files parameter
+    const onDrop = useCallback((acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
             setSelectedFile(acceptedFiles[0]);
         }
@@ -90,7 +88,6 @@ function AdminPage() {
                     const movieDocRef = doc(db, "movieNights", selectedMovieId);
                     await updateDoc(movieDocRef, { posterURL: downloadURL });
                     
-                    // Refresh UI
                     setApprovedMovies(movies => movies.filter(m => m.id !== selectedMovieId));
                     setSelectedFile(null);
                     setIsUploading(false);
@@ -102,14 +99,11 @@ function AdminPage() {
 
     const selectedMovieInfo = approvedMovies.find(m => m.id === selectedMovieId);
 
+    // ... The rest of your JSX should now work because TypeScript knows the types ...
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-4xl font-cinzel text-brand-gold mb-8 text-center">Admin Dashboard</h1>
-
-            {/* Pending Reviews Section */}
-            {/* ... This section remains the same ... */}
-            
-            {/* Approved Movies & Uploader Section */}
+            {/* The JSX for pending movies, etc. */}
             <div className="bg-brand-card p-6 rounded-2xl shadow-2xl border-2 border-yellow-300/20">
                 <h2 className="text-2xl font-cinzel text-brand-gold mb-4">Add Movie Poster</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -117,7 +111,7 @@ function AdminPage() {
                     <div>
                         <h3 className="text-lg font-cinzel text-yellow-300/80 mb-2">1. Select an Approved Movie</h3>
                         <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-                           {approvedMovies.filter(m => !m.posterURL).length > 0 ? (
+                           {(approvedMovies.filter(m => !m.posterURL).length > 0) ? (
                                 approvedMovies.filter(m => !m.posterURL).map(movie => (
                                 <div
                                     key={movie.id}
@@ -125,7 +119,7 @@ function AdminPage() {
                                     className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedMovieId === movie.id ? 'bg-brand-gold text-black' : 'bg-black/20 hover:bg-black/40'}`}
                                 >
                                     <p className="font-bold">{movie.movieTitle}</p>
-                                    <p className="text-xs">{movie.eventDate}</p>
+                                    <p className="text-xs">{movie.showDate}</p>
                                 </div>
                                 ))
                            ) : (
@@ -168,5 +162,3 @@ function AdminPage() {
 }
 
 export default AdminPage;
-
-// END - 2025-09-15 04:21 PM

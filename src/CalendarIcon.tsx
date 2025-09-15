@@ -2,7 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-function CalendarIcon({ dateString }) {
+function CalendarIcon({ dateString }: { dateString: string }) {
   if (!dateString) return null;
   
   const date = new Date(`${dateString}T00:00:00`);

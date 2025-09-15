@@ -18,7 +18,7 @@ function AdminAuth() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         if (password === CORRECT_PASSWORD) {
             // If password is correct, set a flag in sessionStorage and update state
