@@ -29,7 +29,7 @@ body {
 .main-container {
   flex-grow: 1;
   padding: 2rem 1rem;
-  max-width: 1200px; /* Increased max-width for better spacing */
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -49,7 +49,7 @@ body {
   font-family: var(--font-heading);
   font-size: 2.5rem;
   color: #fff;
-  text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8); /* Added text shadow for readability */
+  text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8);
   margin: 1rem 0;
 }
 
@@ -78,13 +78,13 @@ body {
   font-family: var(--font-heading);
   font-size: 2rem;
   color: var(--color-gold);
-  text-shadow: 0 0 10px rgba(0,0,0,0.8); /* Added text shadow */
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 .details-column h3 {
   font-family: var(--font-heading);
   font-size: 2rem;
   color: #fff;
-  text-shadow: 0 0 5px rgba(0,0,0,0.8); /* Added text shadow */
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
   margin: 1rem 0;
 }
 
@@ -117,7 +117,7 @@ body {
 }
 .admin-link a {
   color: rgba(234, 227, 217, 0.4);
-  text-shadow: 0 0 3px rgba(0,0,0,0.5); /* Added subtle shadow for admin link */
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 
 
@@ -130,14 +130,14 @@ body {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  text-shadow: 0 1px 5px rgba(0,0,0,0.4), 0 0 5px rgba(0,0,0,0.4); /* Added stronger text shadow */
+  text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8); /* Improved readability */
 }
 .page-message {
   text-align: center;
   padding: 2rem;
   background-color: rgba(0,0,0,0.2);
   border-radius: 8px;
-  text-shadow: 0 0 3px rgba(0,0,0,0.5); /* Added subtle shadow */
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 .page-message.error {
   color: #ff8a8a;
@@ -147,7 +147,7 @@ body {
 }
 .showings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjusted minmax for more cards on smaller screens */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1.5rem;
 }
 .showings-card {
@@ -157,6 +157,7 @@ body {
   border: 1px solid rgba(212, 175, 55, 0.2);
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   text-align: center;
+  position: relative; /* Needed for absolute positioning of calendar icon */
 }
 .showings-card-details {
   padding: 1rem;
@@ -164,113 +165,101 @@ body {
 .showings-card-title {
   font-family: var(--font-heading);
   color: #fff;
-  font-size: 1.3rem; /* Slightly smaller for card titles */
+  font-size: 1.3rem;
   margin: 0 0 0.5rem 0;
-  text-shadow: 0 0 5px rgba(0,0,0,0.8); /* Added text shadow */
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 .showings-card-date {
   color: var(--color-limestone);
   margin: 0;
-  text-shadow: 0 0 3px rgba(0,0,0,0.5); /* Added subtle shadow */
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 .showings-poster-container {
-  background-color: #000; /* Solid background to fill empty space */
-  height: 270px; /* Fixed height for consistent card size (approx 2:3 aspect for 180px width) */
-  display: flex; /* Use flexbox to center image vertically */
+  background-color: #000;
+  height: 270px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem; /* Small internal padding */
+  padding: 0.5rem;
+  position: relative; /* Needed for absolute positioning of calendar icon */
 }
 .showings-poster-container img {
   width: 100%;
-  max-height: 100%; /* Ensure image doesn't overflow container height */
-  object-fit: contain; /* Ensures the whole image fits, no cropping */
-  display: block; /* Remove extra space below image */
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
   box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 .showings-section:last-of-type .showings-card {
-  opacity: 0.7; /* Make history cards slightly faded */
+  opacity: 0.7;
 }
 
-/* File: src/index.css (replace the old calendar styles) */
-
 /* ======================================= */
-/* ====== STYLED CALENDAR STYLES ====== */
+/* ====== NEW CALENDAR ICON STYLES ====== */
 /* ======================================= */
-.calendar-container {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 #fff;
-  padding: 10px;
-  padding-top: 25px; /* Space for rings */
-  position: relative;
-  margin-top: 1rem;
-  color: #333;
-}
-.calendar-rings {
+.calendar-icon-wrapper {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 20px;
-}
-.ring {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #fff;
+  bottom: 10px; /* Adjust as needed for desired overlap */
+  right: 10px;  /* Adjust as needed for desired overlap */
+  width: 70px; /* Width of the calendar icon */
+  height: 90px; /* Height of the calendar icon */
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transform: rotate(5deg); /* Slight angle */
+  overflow: hidden;
   border: 1px solid #ccc;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
-.calendar-header {
-  background: var(--color-terracotta);
-  color: #fff;
-  text-align: center;
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  padding: 5px;
-  border-radius: 4px;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-}
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  margin-top: 10px;
-}
-.day-name {
-  font-size: 0.7rem;
-  font-weight: bold;
-  text-align: center;
-  color: var(--color-bronze);
-}
-.day-cell {
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 5px 0;
-  position: relative;
-}
-.day-cell.empty {
-  visibility: hidden;
-}
-.event-day {
-  color: #fff;
-  font-weight: bold;
-}
-.event-day::before {
-  content: '';
+
+.calendar-icon-top {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
-  background: var(--color-terracotta);
-  border-radius: 50%;
-  z-index: -1;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15px; /* Height of the top red strip */
+  background-color: var(--color-terracotta);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 5px;
+  box-sizing: border-box;
 }
+
+.calendar-icon-top .ring {
+  width: 5px;
+  height: 5px;
+  background-color: #555; /* Ring color */
+  border-radius: 50%;
+}
+
+.calendar-icon-header {
+  background-color: var(--color-terracotta); /* Red header */
+  color: #fff;
+  font-family: var(--font-body); /* Using Raleway for consistency */
+  font-weight: 700;
+  font-size: 0.6em; /* Smaller font for month name */
+  text-align: center;
+  padding: 16px 0 2px 0; /* Adjust padding to sit below rings */
+  z-index: 1; /* Ensure it's above the rings */
+}
+
+.calendar-icon-day-num {
+  font-family: var(--font-heading); /* Playfair Display for big number */
+  font-size: 2em; /* Big day number */
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  margin-top: -5px; /* Pull up a bit */
+}
+
 
 /* ======================================================= */
 /* ====== MEDIA QUERIES FOR TABLETS AND DESKTOPS ====== */
@@ -317,4 +306,4 @@ body {
     display: none;
   }
 }
-/* END - 2025-09-15 10:45 AM */
+/* END - 2025-09-15 13:30 PM */
