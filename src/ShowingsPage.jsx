@@ -1,25 +1,25 @@
 // File: src/ShowingsPage.jsx
 import React from 'react';
 import { db } from './firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import EventCalendar from './EventCalendar'; // 1. Import the new component
 
 // A reusable card component for this page
-const MovieCard = ({ movie, isHistory = false }) => (
+const MovieCard = ({ movie }) => (
     <div className="showings-card">
         <div className="showings-poster-container">
             <img src={movie.posterUrl} alt={`${movie.movieTitle} Poster`} />
         </div>
         <div className="showings-card-details">
             <h3 className="showings-card-title">{movie.movieTitle}</h3>
-            <p className="showings-card-date">
-                {isHistory ? 'Shown on: ' : 'Showing on: '}
-                <strong>{movie.showDate}</strong>
-            </p>
+            {/* 2. Replace the date text with the EventCalendar component */}
+            <EventCalendar eventDate={movie.showDate} />
         </div>
     </div>
 );
 
 function ShowingsPage() {
+    // ... (rest of the component logic is unchanged)
     const [activeMovies, setActiveMovies] = React.useState([]);
     const [comingSoonMovies, setComingSoonMovies] = React.useState([]);
     const [historyMovies, setHistoryMovies] = React.useState([]);
@@ -49,11 +49,10 @@ function ShowingsPage() {
                 }
             });
             
-            // Sort movies by date
             const sortByDate = (a, b) => new Date(a.showDate) - new Date(b.showDate);
             setActiveMovies(active.sort(sortByDate));
             setComingSoonMovies(comingSoon.sort(sortByDate));
-            setHistoryMovies(history.sort((a,b) => new Date(b.showDate) - new Date(a.showDate))); // History descending
+            setHistoryMovies(history.sort((a,b) => new Date(b.showDate) - new Date(a.showDate)));
         };
 
         const fetchMovies = async () => {
@@ -81,44 +80,23 @@ function ShowingsPage() {
     if (isLoading) return <div className="page-message">Loading shows...</div>;
     if (error) return <div className="page-message error">{error}</div>;
 
+    // We'll combine all movies for display, but keep them categorized for sectioning if needed in the future
+    const allMovies = [...activeMovies, ...comingSoonMovies, ...historyMovies];
+
+
     return (
         <div className="page-container">
-            {/* You're Invited Section */}
-            {activeMovies.length > 0 && (
-                <section className="showings-section">
-                    <h2 className="page-title">You're Invited!</h2>
-                    <div className="showings-grid">
-                        {activeMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
-                    </div>
-                </section>
-            )}
-
-            {/* Coming Soon Section */}
-            <section className="showings-section">
-                <h2 className="page-title">Coming Soon</h2>
-                {comingSoonMovies.length > 0 ? (
-                    <div className="showings-grid">
-                        {comingSoonMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
-                    </div>
-                ) : (
-                    <p className="page-message">No upcoming movies scheduled yet. Check back soon!</p>
-                )}
-            </section>
-
-            {/* History Section */}
-            <section className="showings-section">
-                <h2 className="page-title">Past Showings</h2>
-                {historyMovies.length > 0 ? (
-                    <div className="showings-grid">
-                        {historyMovies.map(movie => <MovieCard key={movie.id} movie={movie} isHistory={true} />)}
-                    </div>
-                ) : (
-                    <p className="page-message">No past movies to show.</p>
-                )}
-            </section>
+             <h2 className="page-title">Showings</h2>
+             {allMovies.length > 0 ? (
+                <div className="showings-grid">
+                    {allMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
+                </div>
+             ) : (
+                <p className="page-message">No movies to show.</p>
+             )}
         </div>
     );
 }
 
 export default ShowingsPage;
-// END - 2025-09-15 10:11 AM
+// END - 2025-09-15 12:30 PM
