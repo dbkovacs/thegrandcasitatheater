@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const buildTimestamp = "2025-09-15 10:05 AM";
+const buildTimestamp = "2025-09-15 13:30 PM"; // Or your latest build time
 
 function Layout({ children }) {
   return (
@@ -19,6 +19,7 @@ function Layout({ children }) {
         <div className="footer-nav">
           <Link to="/showings">Showings & History</Link>
           <Link to="/pick-a-movie">Host a Movie Night</Link>
+          <Link to="/reservations">Reserve Seats</Link> {/* <-- NEW LINK */}
         </div>
         <div className="admin-link">
           <Link to="/admin">Admin</Link>
@@ -32,4 +33,4 @@ function Layout({ children }) {
 }
 
 export default Layout;
-// END - 2025-09-15 10:05 AM
+// END - 2025-09-15 13:30 PM

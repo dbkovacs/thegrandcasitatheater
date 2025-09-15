@@ -6,6 +6,7 @@ import HomePage from './HomePage';
 import SignUpPage from './SignUpPage';
 import AdminAuth from './AdminAuth';
 import ShowingsPage from './ShowingsPage';
+import ReservationsPage from './ReservationsPage'; // <-- 1. IMPORT NEW PAGE
 
 function App() {
     return (
@@ -15,10 +16,11 @@ function App() {
                 <Route path="/pick-a-movie" element={<Layout><SignUpPage /></Layout>} />
                 <Route path="/admin" element={<Layout><AdminAuth /></Layout>} />
                 <Route path="/showings" element={<Layout><ShowingsPage /></Layout>} />
+                <Route path="/reservations" element={<Layout><ReservationsPage /></Layout>} /> {/* <-- 2. ADD NEW ROUTE */}
             </Routes>
         </Router>
     );
 }
 
 export default App;
-// END - 2025-09-15 10:05 AM
+// END - 2025-09-15 13:30 PM
