@@ -2,7 +2,7 @@
 import React from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import EventCalendar from './EventCalendar'; // 1. Import the new component
+import StyledCalendar from './StyledCalendar'; // 1. Import the new component
 
 // A reusable card component for this page
 const MovieCard = ({ movie }) => (
@@ -12,14 +12,14 @@ const MovieCard = ({ movie }) => (
         </div>
         <div className="showings-card-details">
             <h3 className="showings-card-title">{movie.movieTitle}</h3>
-            {/* 2. Replace the date text with the EventCalendar component */}
-            <EventCalendar eventDate={movie.showDate} />
+            {/* 2. Replace EventCalendar with StyledCalendar */}
+            <StyledCalendar eventDate={movie.showDate} />
         </div>
     </div>
 );
 
+// ... (the rest of the component is unchanged)
 function ShowingsPage() {
-    // ... (rest of the component logic is unchanged)
     const [activeMovies, setActiveMovies] = React.useState([]);
     const [comingSoonMovies, setComingSoonMovies] = React.useState([]);
     const [historyMovies, setHistoryMovies] = React.useState([]);
@@ -30,16 +30,11 @@ function ShowingsPage() {
         const categorizeMovies = (movieList) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-
-            const active = [];
-            const comingSoon = [];
-            const history = [];
-
+            const active = [], comingSoon = [], history = [];
             movieList.forEach(movie => {
                 const showDate = new Date(`${movie.showDate}T00:00:00`);
                 const activeWindowStart = new Date(showDate);
                 activeWindowStart.setDate(showDate.getDate() - 6);
-
                 if (today >= activeWindowStart && today <= showDate) {
                     active.push(movie);
                 } else if (today < activeWindowStart) {
@@ -48,7 +43,6 @@ function ShowingsPage() {
                     history.push(movie);
                 }
             });
-            
             const sortByDate = (a, b) => new Date(a.showDate) - new Date(b.showDate);
             setActiveMovies(active.sort(sortByDate));
             setComingSoonMovies(comingSoon.sort(sortByDate));
@@ -80,9 +74,7 @@ function ShowingsPage() {
     if (isLoading) return <div className="page-message">Loading shows...</div>;
     if (error) return <div className="page-message error">{error}</div>;
 
-    // We'll combine all movies for display, but keep them categorized for sectioning if needed in the future
     const allMovies = [...activeMovies, ...comingSoonMovies, ...historyMovies];
-
 
     return (
         <div className="page-container">
@@ -99,4 +91,4 @@ function ShowingsPage() {
 }
 
 export default ShowingsPage;
-// END - 2025-09-15 12:30 PM
+// END - 2025-09-15 13:00 PM
