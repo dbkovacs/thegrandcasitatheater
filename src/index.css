@@ -166,33 +166,39 @@ body {
 .showings-section:last-of-type .showings-card {
   opacity: 0.7;
 }
+/* File: src/index.css (replace the old calendar styles) */
 
 /* ======================================= */
-/* ====== NEW CALENDAR ICON STYLES ====== */
+/* ====== CORRECTED CALENDAR ICON STYLES ====== */
 /* ======================================= */
 .calendar-icon-wrapper {
   position: absolute;
-  bottom: -10px; /* Pull it down to overlap */
-  right: -10px;  /* Pull it off the edge */
+  bottom: 10px;
+  right: -8px; /* Pull it slightly off the edge */
   width: 90px;
-  background-color: #fff;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  /* Multi-layered shadow for more depth */
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.3); 
-  transform: rotate(5deg);
-  border: 2px solid #fff;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3); 
+  transform: rotate(6deg);
+  border: 1px solid #ddd;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding-top: 18px; /* Space for the rings */
 }
-.calendar-icon-rings {
+
+.calendar-icon-top {
   position: absolute;
   top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  width: 100%;
   display: flex;
-  gap: 12px;
-  z-index: 2;
+  justify-content: space-around;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
-.calendar-icon-rings .ring {
+
+.calendar-icon-top .ring {
   width: 8px;
   height: 8px;
   background: #fff;
@@ -200,33 +206,35 @@ body {
   border: 1px solid #aaa;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
 }
+
 .calendar-icon-header {
-  background-color: #e62e2e; /* Brighter red */
+  background-color: #e62e2e; /* Bright red header */
   color: #fff;
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 1.2rem; /* Larger month */
+  font-size: 0.9rem; /* Larger month text */
   text-align: center;
-  padding-top: 20px; /* Push text below rings */
-  padding-bottom: 5px;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2);
+  padding: 4px 5px;
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,0.2);
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 }
+
 .calendar-icon-body {
   padding: 5px;
   color: #222;
   text-align: center;
   background-color: #f9f9f9;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
+
 .calendar-icon-day-num {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
-  line-height: 1; /* Fix for descender overlap */
+  line-height: 1.1; /* Adjusted line-height to fix overlap */
 }
+
 .calendar-icon-day-name {
   font-family: var(--font-body);
   font-weight: 700;
