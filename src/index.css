@@ -18,21 +18,23 @@ body {
 }
 
 .site-wrapper {
-  /* MODIFIED: Path now points to your public folder */
-  background-image: url('/textures/wall-texture.jpg'); 
+  /* MODIFIED: Path now points to the new src/assets folder */
+  background-image: url('./assets/textures/wall-texture.jpg');
   background-attachment: fixed;
   background-size: cover;
 }
 
 .site-header, .site-footer {
-  /* MODIFIED: Path now points to your public folder */
-  background-image: url('/textures/ceiling-texture.jpg');
+  /* MODIFIED: Path now points to the new src/assets folder */
+  background-image: url('./assets/textures/ceiling-texture.jpg');
   background-size: 300px;
   padding: 1rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   border-bottom: 2px solid var(--color-gold);
   border-top: 2px solid var(--color-gold);
 }
+
+/* ... (the rest of the file is unchanged) ... */
 
 .site-header h1 {
   font-family: var(--font-heading);
