@@ -1,31 +1,42 @@
 // File: src/ShowingsPage.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 
-const buildTimestamp = "2025-09-13 14:45 PM";
+// A reusable card component for this page
+const MovieCard = ({ movie, isHistory = false }) => (
+    <div className="showings-card">
+        <div className="showings-poster-container">
+            <img src={movie.posterUrl} alt={`${movie.movieTitle} Poster`} />
+        </div>
+        <div className="showings-card-details">
+            <h3 className="showings-card-title">{movie.movieTitle}</h3>
+            <p className="showings-card-date">
+                {isHistory ? 'Shown on: ' : 'Showing on: '}
+                <strong>{movie.showDate}</strong>
+            </p>
+        </div>
+    </div>
+);
 
 function ShowingsPage() {
-    const [activeMovies, setActiveMovies] = useState([]);
-    const [comingSoonMovies, setComingSoonMovies] = useState([]);
-    const [historyMovies, setHistoryMovies] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [activeMovies, setActiveMovies] = React.useState([]);
+    const [comingSoonMovies, setComingSoonMovies] = React.useState([]);
+    const [historyMovies, setHistoryMovies] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
 
-    useEffect(() => {
+    React.useEffect(() => {
         const categorizeMovies = (movieList) => {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normalize today's date to midnight
+            today.setHours(0, 0, 0, 0);
 
             const active = [];
             const comingSoon = [];
             const history = [];
 
             movieList.forEach(movie => {
-                // Firestore dates are strings like 'YYYY-MM-DD'. Convert to Date objects.
-                // Appending T00:00:00 prevents timezone-related date shifts.
                 const showDate = new Date(`${movie.showDate}T00:00:00`);
-                
                 const activeWindowStart = new Date(showDate);
                 activeWindowStart.setDate(showDate.getDate() - 6);
 
@@ -38,26 +49,24 @@ function ShowingsPage() {
                 }
             });
             
-            setActiveMovies(active);
-            setComingSoonMovies(comingSoon);
-            setHistoryMovies(history);
+            // Sort movies by date
+            const sortByDate = (a, b) => new Date(a.showDate) - new Date(b.showDate);
+            setActiveMovies(active.sort(sortByDate));
+            setComingSoonMovies(comingSoon.sort(sortByDate));
+            setHistoryMovies(history.sort((a,b) => new Date(b.showDate) - new Date(a.showDate))); // History descending
         };
 
         const fetchMovies = async () => {
             setIsLoading(true);
             try {
                 const moviesCollection = collection(db, "movieNights");
-                // We only need to fetch 'Approved' movies. The code will sort them.
                 const q = query(
                     moviesCollection, 
-                    where("status", "==", "Approved"),
-                    orderBy("showDate", "desc")
+                    where("status", "==", "Approved")
                 );
                 const querySnapshot = await getDocs(q);
                 const movieList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
                 categorizeMovies(movieList);
-
             } catch (err) {
                 console.error("Error fetching movies: ", err);
                 setError("Could not load movie data.");
@@ -69,66 +78,47 @@ function ShowingsPage() {
         fetchMovies();
     }, []);
 
-    const MovieCard = ({ movie, isHistory = false }) => (
-        <div style={{ border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', opacity: isHistory ? 0.7 : 1 }}>
-            <img src={movie.posterUrl} alt={`${movie.movieTitle} Poster`} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />
-            <div style={{ padding: '1rem' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0' }}>{movie.movieTitle}</h3>
-                <p style={{ margin: 0, fontSize: isHistory ? '0.9rem' : '1rem' }}>
-                    {isHistory ? 'Shown on: ' : 'Showing on: '}
-                    <strong>{movie.showDate}</strong>
-                </p>
-            </div>
-        </div>
-    );
-
-    if (isLoading) return <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>Loading shows...</div>;
-    if (error) return <div style={{ fontFamily: 'sans-serif', padding: '2rem', color: 'red' }}>{error}</div>;
+    if (isLoading) return <div className="page-message">Loading shows...</div>;
+    if (error) return <div className="page-message error">{error}</div>;
 
     return (
-        <div style={{ fontFamily: 'sans-serif', padding: '2rem', maxWidth: '1200px', margin: 'auto' }}>
+        <div className="page-container">
             {/* You're Invited Section */}
-            <section>
-                <h2>You're Invited!</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.5rem' }}>
-                    {activeMovies.length > 0 ? (
-                        activeMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)
-                    ) : (
-                        <p>No movie showing this week. Check out what's coming soon!</p>
-                    )}
-                </div>
-            </section>
+            {activeMovies.length > 0 && (
+                <section className="showings-section">
+                    <h2 className="page-title">You're Invited!</h2>
+                    <div className="showings-grid">
+                        {activeMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
+                    </div>
+                </section>
+            )}
 
             {/* Coming Soon Section */}
-            <section style={{ marginTop: '3rem' }}>
-                <h2>Coming Soon</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                    {comingSoonMovies.length > 0 ? (
-                        comingSoonMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)
-                    ) : (
-                        <p>No upcoming movies scheduled yet. Check back soon!</p>
-                    )}
-                </div>
+            <section className="showings-section">
+                <h2 className="page-title">Coming Soon</h2>
+                {comingSoonMovies.length > 0 ? (
+                    <div className="showings-grid">
+                        {comingSoonMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
+                    </div>
+                ) : (
+                    <p className="page-message">No upcoming movies scheduled yet. Check back soon!</p>
+                )}
             </section>
 
             {/* History Section */}
-            <section style={{ marginTop: '3rem' }}>
-                <h2>Past Showings</h2>
-                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                    {historyMovies.length > 0 ? (
-                        historyMovies.map(movie => <MovieCard key={movie.id} movie={movie} isHistory={true} />)
-                    ) : (
-                        <p>No past movies to show.</p>
-                    )}
-                </div>
+            <section className="showings-section">
+                <h2 className="page-title">Past Showings</h2>
+                {historyMovies.length > 0 ? (
+                    <div className="showings-grid">
+                        {historyMovies.map(movie => <MovieCard key={movie.id} movie={movie} isHistory={true} />)}
+                    </div>
+                ) : (
+                    <p className="page-message">No past movies to show.</p>
+                )}
             </section>
-            
-            <div style={{ position: 'fixed', bottom: 0, right: 0, padding: '4px 8px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', fontSize: '10px', borderTopLeftRadius: '5px' }}>
-                Build: {buildTimestamp}
-            </div>
         </div>
     );
 }
 
 export default ShowingsPage;
-// END - 2025-09-13 14:45 PM
+// END - 2025-09-15 10:11 AM
