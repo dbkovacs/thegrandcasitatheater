@@ -1,4 +1,3 @@
-// File: thegrandcasitatheater/tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -8,7 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
-        'cinzel': ['Cinzel', 'serif'],
+        'serif': ['Cinzel', 'serif'],
       },
       colors: {
         'brand-dark': '#380000',
@@ -19,4 +18,3 @@ module.exports = {
   },
   plugins: [],
 }
-

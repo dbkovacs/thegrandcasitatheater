@@ -1,0 +1,57 @@
+// File: src/App.css
+/* Using Cinzel font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #380000;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.bg-brand-dark {
+  background-color: #380000;
+}
+
+.bg-brand-card {
+  background-color: #2a0000;
+}
+
+.text-brand-gold {
+  color: #fde047; /* Tailwind's yellow-300 */
+}
+
+/* =================================
+   Velvet Curtain Button Style
+   ================================= */
+.btn-velvet {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #000;
+  color: #fde047;
+  background-color: #4c0000;
+  background-image: linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2) 75%, transparent 75%, transparent);
+  background-size: 20px 20px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.7);
+  transition: all 0.3s ease;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none; /* For <a> tags */
+  cursor: pointer; /* For <button> tags */
+}
+
+.btn-velvet:hover {
+  background-color: #fde047;
+  color: #4c0000;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 10px rgba(255, 255, 255, 0.3);
+  background-image: none;
+}
+// END - 2025-09-15 04:15 PM
