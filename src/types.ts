@@ -9,9 +9,14 @@ export interface MovieNight {
   status: 'Pending Review' | 'Approved';
   thermostat: number;
   submittedAt: any;
-  posterURL?: string; // Optional
-  trailerLink?: string; // ADDED: Optional trailer link
+  posterURL?: string;
+  trailerLink?: string; 
+  // --- NEW FIELDS ---
+  audience?: 'Kids Welcome' | 'Adults Only';
+  greeting?: string;
+  notesToDavid?: string;
 }
+
 
 // A blueprint for a reservation
 export interface Reservation {

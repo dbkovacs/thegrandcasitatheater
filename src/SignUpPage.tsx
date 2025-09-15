@@ -1,39 +1,51 @@
 // File: src/SignUpPage.tsx
 import React, { useState } from 'react';
-import { db } from './firebase'; // <-- FIX: Removed .js
+import { db } from './firebase';
 import { collection, addDoc } from "firebase/firestore";
 
 function SignUpPage() {
+    // State for all our new fields
     const [hostName, setHostName] = useState('');
     const [movieTitle, setMovieTitle] = useState('');
-    const [showDate, setShowDate] = useState('');
-    const [thermostat, setThermostat] = useState(70);
+    const [audience, setAudience] = useState<'Kids Welcome' | 'Adults Only'>('Kids Welcome');
+    const [greeting, setGreeting] = useState('');
+    const [notesToDavid, setNotesToDavid] = useState('');
+    const [thermostat, setThermostat] = useState(74); // New default
+    
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
 
-    // FIX: Add the type for the form event
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!hostName || !movieTitle || !showDate) {
-            setMessage('Please fill out all fields.');
+        if (!hostName || !movieTitle) {
+            setMessage('Please fill out Your Name and Movie Title.');
             return;
         }
         setIsSubmitting(true);
-        // ... rest of the function is fine
+        setMessage('Submitting your request...');
+
         try {
+            // Add the new fields to our Firebase document
             await addDoc(collection(db, "movieNights"), {
-                hostName: hostName,
-                movieTitle: movieTitle,
-                showDate: showDate,
+                hostName,
+                movieTitle,
+                audience,
+                greeting,
+                notesToDavid,
                 thermostat: Number(thermostat),
                 status: 'Pending Review',
                 submittedAt: new Date()
             });
+
             setMessage('Success! Your movie night has been submitted for review.');
+            // Reset form
             setHostName('');
             setMovieTitle('');
-            setShowDate('');
-            setThermostat(70);
+            setAudience('Kids Welcome');
+            setGreeting('');
+            setNotesToDavid('');
+            setThermostat(74);
+
         } catch (error) {
             console.error("Error adding document: ", error);
             setMessage('An error occurred. Please try again.');
@@ -43,37 +55,66 @@ function SignUpPage() {
     };
 
     return (
-        <div className="container mx-auto p-4 md:p-8 max-w-2xl">
-            <div className="bg-brand-card p-8 rounded-2xl shadow-2xl border-2 border-yellow-300/20">
-                <h1 className="text-4xl font-cinzel text-brand-gold mb-2 text-center">Pick a Movie</h1>
-                <p className="text-center text-yellow-300/70 mb-8">Ready to host? Fill out the details below to get started.</p>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* ... form fields are fine ... */}
-                     <div>
-                        <label htmlFor="hostName" className="block text-sm font-bold text-yellow-300/80 mb-2 font-cinzel">Your Name</label>
-                        <input type="text" id="hostName" value={hostName} onChange={(e) => setHostName(e.target.value)} className="w-full bg-black/30 border-2 border-yellow-300/30 rounded-lg p-3 text-white focus:outline-none focus:border-brand-gold" style={{ colorScheme: 'dark' }} />
-                    </div>
-                    <div>
-                        <label htmlFor="movieTitle" className="block text-sm font-bold text-yellow-300/80 mb-2 font-cinzel">Movie Title</label>
-                        <input type="text" id="movieTitle" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} className="w-full bg-black/30 border-2 border-yellow-300/30 rounded-lg p-3 text-white focus:outline-none focus:border-brand-gold" style={{ colorScheme: 'dark' }} />
-                    </div>
-                    <div>
-                        <label htmlFor="showDate" className="block text-sm font-bold text-yellow-300/80 mb-2 font-cinzel">Requested Date</label>
-                        <input type="date" id="showDate" value={showDate} onChange={(e) => setShowDate(e.target.value)} className="w-full bg-black/30 border-2 border-yellow-300/30 rounded-lg p-3 text-white focus:outline-none focus:border-brand-gold" style={{ colorScheme: 'dark' }} />
-                    </div>
-                    <div>
-                        <label htmlFor="thermostat" className="block text-sm font-bold text-yellow-300/80 mb-2 font-cinzel">Preferred Temp: {thermostat}°F</label>
-                        <input type="range" id="thermostat" min="65" max="75" value={thermostat} onChange={(e) => setThermostat(parseInt(e.target.value))} className="w-full h-2 bg-black/30 rounded-lg appearance-none cursor-pointer accent-brand-gold" />
-                    </div>
-                    <div className="pt-4">
-                        <button type="submit" disabled={isSubmitting} className="w-full btn-velvet text-lg">
-                            {isSubmitting ? 'Submitting...' : 'Submit Request'}
-                        </button>
-                    </div>
-                </form>
-                {message && <p className="text-center mt-6 text-brand-gold">{message}</p>}
+        <div className="signup-page-container">
+            <div className="signup-header">
+                <h1 className="font-cinzel text-5xl">The Grand Casita Theater</h1>
+                <p>Create Your Perfect Movie Night</p>
             </div>
+
+            <form onSubmit={handleSubmit} className="signup-form">
+                <div className="form-main-panel">
+                    {/* --- Left Side of Form --- */}
+                    <div className="form-fields">
+                        <label>Your Name</label>
+                        <input type="text" value={hostName} onChange={(e) => setHostName(e.target.value)} placeholder="e.g., Jane Doe" />
+
+                        <label>Movie Title</label>
+                        <input type="text" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} placeholder="e.g., The Princess Bride (1987)" />
+                        
+                        <label>Notes to David (Optional)</label>
+                        <input type="text" value={notesToDavid} onChange={(e) => setNotesToDavid(e.target.value)} placeholder="e.g., 'Make sure it's the widescreen version!'" />
+
+                        <label>Audience</label>
+                        <div className="radio-group">
+                            <label className={audience === 'Kids Welcome' ? 'selected' : ''}>
+                                <input type="radio" value="Kids Welcome" checked={audience === 'Kids Welcome'} onChange={() => setAudience('Kids Welcome')} />
+                                Kids Welcome
+                            </label>
+                            <label className={audience === 'Adults Only' ? 'selected' : ''}>
+                                <input type="radio" value="Adults Only" checked={audience === 'Adults Only'} onChange={() => setAudience('Adults Only')} />
+                                Adults Only
+                            </label>
+                        </div>
+                        
+                        <label>Greeting for Your Guests</label>
+                        <textarea value={greeting} onChange={(e) => setGreeting(e.target.value)} placeholder="e.g., 'I grew up loving this movie, hope you join me!'" rows={4}></textarea>
+                    </div>
+
+                    {/* --- Right Side of Form (Thermostat) --- */}
+                    <div className="form-thermostat-panel">
+                        <label>Set Theater Temp</label>
+                        <p className="thermostat-subtitle">(We'll do our best!)</p>
+                        <div className="thermostat-display">{thermostat}°F</div>
+                        <div className="thermostat-slider-container">
+                             <input
+                                type="range"
+                                min="70"
+                                max="80"
+                                value={thermostat}
+                                onChange={(e) => setThermostat(parseInt(e.target.value))}
+                                className="thermostat-slider"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" disabled={isSubmitting} className="submit-button">
+                    {isSubmitting ? 'Submitting...' : 'Submit Movie Night'}
+                </button>
+                 {message && <p className="form-message">{message}</p>}
+            </form>
         </div>
     );
 }
+
 export default SignUpPage;
