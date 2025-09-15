@@ -21,6 +21,7 @@ const MovieCard = ({ movie, isHistory = false }) => (
     </div>
 );
 
+
 // ... (the rest of the component is unchanged)
 function ShowingsPage() {
     const [activeMovies, setActiveMovies] = React.useState([]);
@@ -82,7 +83,7 @@ function ShowingsPage() {
 
     return (
         <div className="page-container">
-             <h2 className="page-title">Showings</h2>
+             <h2 className="page-title"><span>Showings</span></h2>
              {allMovies.length > 0 ? (
                 <div className="showings-grid">
                     {allMovies.map(movie => <MovieCard key={movie.id} movie={movie} />)}
@@ -95,4 +96,4 @@ function ShowingsPage() {
 }
 
 export default ShowingsPage;
-// END - 2025-09-15_13:06 PM
+// END - 2025-09-15 13:12 PM
