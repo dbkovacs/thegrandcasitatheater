@@ -1,0 +1,13 @@
+Theme and Design elements
+you're invited page
+reservations page
+product auction page
+tune up form fields
+adults only tag
+history of thermnostat with name and movie name
+
+
+Change Log
+added password to admin page, updates to app and adminAuth
+added theme and redesign home page app.jsx
+
