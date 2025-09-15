@@ -3,10 +3,23 @@ import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, query, onSnapshot, addDoc, serverTimestamp, orderBy } from 'firebase/firestore';
 
+// --- THIS IS THE UPDATED SEAT LAYOUT ---
+// Positions and IDs have been updated to match your new image.
 const seatLayout = [
-    { id: 'A1', type: 'beanbag', top: '25%', left: '78%' }, { id: 'A2', type: 'beanbag', top: '26%', left: '59%' }, { id: 'A3', type: 'beanbag', top: '26%', left: '39%' }, { id: 'A4', type: 'beanbag', top: '25%', left: '20%' },
-    { id: 'B1', type: 'chair', top: '48%', left: '75%' }, { id: 'B2', type: 'chair', top: '48%', left: '62%' }, { id: 'B3', type: 'chair', top: '48%', left: '37%' }, { id: 'B4', type: 'chair', top: '48%', left: '24%' },
-    { id: 'C1', type: 'chair', top: '70%', left: '72%' }, { id: 'C2', type: 'chair', top: '70%', left: '55%' }, { id: 'C3', type: 'chair', top: '70%', left: '42%' }, { id: 'C4', type: 'chair', top: '70%', left: '28%' },
+    // Row A (Front)
+    { id: 'A1', type: 'chair', top: '78%', left: '22%' },
+    { id: 'A2', type: 'chair', top: '78%', left: '38%' },
+    { id: 'A3', type: 'chair', top: '78%', left: '61%' },
+    { id: 'A4', type: 'chair', top: '78%', left: '77%' },
+    // Row B (Middle)
+    { id: 'B1', type: 'chair', top: '55%', left: '29%' },
+    { id: 'B2', type: 'chair', top: '55%', left: '49%' },
+    { id: 'B3', type: 'chair', top: '55%', left: '70%' },
+    // Row C (Back)
+    { id: 'C1', type: 'chair', top: '38%', left: '33%' },
+    { id: 'C2', type: 'chair', top: '38%', left: '45%' },
+    { id: 'C3', type: 'chair', top: '38%', left: '57%' },
+    { id: 'C4', type: 'chair', top: '38%', left: '68%' },
 ];
 
 function ReservationsPage() {
@@ -15,7 +28,7 @@ function ReservationsPage() {
     const [selectedSeatIds, setSelectedSeatIds] = useState([]);
     const [reserverName, setReserverName] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null); // State for displaying errors
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const q = query(collection(db, "reservations"), orderBy("timestamp", "desc"));
@@ -42,7 +55,7 @@ function ReservationsPage() {
             
             setReservations(fetchedReservations);
             setIsLoading(false);
-        }, (err) => { // <-- NEW, IMPROVED ERROR HANDLING
+        }, (err) => {
             console.error("Firestore snapshot error: ", err);
             setError("Failed to connect to reservation data. Check Firestore rules and query.");
             setIsLoading(false);
