@@ -1,103 +1,58 @@
-// File: src/ReservationsPage.tsx
+// src/ReservationsPage.tsx
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { db } from './firebase';
-import { collection, onSnapshot, query, where, addDoc } from 'firebase/firestore';
-import { Reservation, Seat } from './types'; // Import our blueprints
+import { doc, getDoc } from 'firebase/firestore';
+import { MovieNight } from './types';
 
-// This generates a static list of seats for the theater layout
-const generateSeats = (): Seat[] => {
-    const rows = ['A', 'B', 'C', 'D'];
-    const cols = 6;
-    let seats: Seat[] = [];
-    for (const row of rows) {
-        for (let i = 1; i <= cols; i++) {
-            seats.push({ id: `${row}${i}`, status: 'available' });
-        }
-    }
-    return seats;
-};
+// Placeholder for the seat map we will build next
+const SeatMap = () => <div className="bg-black/20 p-8 rounded-lg text-center text-slate-400">Seat Map Component Goes Here</div>;
 
 function ReservationsPage() {
-    // FIX: Define the types for our state
-    const [reservations, setReservations] = useState<Reservation[]>([]);
-    const [seats, setSeats] = useState<Seat[]>(generateSeats());
-    const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
-    const [name, setName] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const { movieId } = useParams<{ movieId: string }>();
+  const [movie, setMovie] = useState<MovieNight | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const movieId = "OeCJW9sWl4LwwYfO8QJD"; // Hardcoded for this specific page
-        const q = query(collection(db, "movieNights", movieId, "reservations"));
+  useEffect(() => {
+    const fetchMovie = async () => {
+      if (!movieId) return;
+      setIsLoading(true);
+      const docRef = doc(db, 'movieNights', movieId);
+      const docSnap = await getDoc(docRef);
 
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            // FIX: Explicitly type the array we're building
-            const fetchedReservations: Reservation[] = [];
-            querySnapshot.forEach((doc) => {
-                fetchedReservations.push({ id: doc.id, ...doc.data() } as Reservation);
-            });
-            setReservations(fetchedReservations);
-
-            const reservedSeatIds = new Set<string>();
-            fetchedReservations.forEach(res => {
-                if (res.seatIds) {
-                    res.seatIds.forEach(id => reservedSeatIds.add(id));
-                }
-            });
-
-            setSeats(currentSeats => currentSeats.map(seat => ({
-                ...seat,
-                status: reservedSeatIds.has(seat.id) ? 'reserved' : 'available'
-            })));
-
-            setIsLoading(false);
-        }, (err) => {
-            console.error("Firestore snapshot error: ", err);
-            setError("Failed to connect to reservation data.");
-            setIsLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    // FIX: Add type for the seatId parameter
-    const handleSeatClick = (seatId: string) => {
-        const seat = seats.find(s => s.id === seatId);
-        // FIX: Check if seat exists before accessing properties
-        if (!seat || seat.status === 'reserved') return;
-
-        setSelectedSeatIds(prevSelected =>
-            prevSelected.includes(seatId)
-                ? prevSelected.filter(id => id !== seatId)
-                : [...prevSelected, seatId]
-        );
+      if (docSnap.exists()) {
+        setMovie({ id: docSnap.id, ...docSnap.data() } as MovieNight);
+      } else {
+        console.error("No such movie found!");
+      }
+      setIsLoading(false);
     };
 
-    // FIX: Add type for the form event
-    const handleReserve = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (selectedSeatIds.length === 0 || !name) {
-            alert('Please select at least one seat and provide a name.');
-            return;
-        }
-        const movieId = "OeCJW9sWl4LwwYfO8QJD";
-        const reservationsCol = collection(db, "movieNights", movieId, "reservations");
-        await addDoc(reservationsCol, { name, seatIds: selectedSeatIds });
-        setSelectedSeatIds([]);
-        setName('');
-    };
-    
-    // FIX: Add type for the seat parameter
-    const getSeatStatus = (seat: Seat): Seat['status'] => {
-        if (selectedSeatIds.includes(seat.id)) return 'selected';
-        return seat.status;
-    }
+    fetchMovie();
+  }, [movieId]);
 
-    return (
-        <div>
-            {/* JSX for reservations page */}
+  if (isLoading) return <p className="text-center text-yellow-300/70 p-8">Loading Reservation Details...</p>;
+  if (!movie) return <p className="text-center text-red-400 p-8">Could not find movie details.</p>;
+
+  return (
+    <div className="container mx-auto p-4 md:p-8">
+      <div className="text-center mb-8">
+        <p className="text-brand-gold font-cinzel">Reservations for</p>
+        <h1 className="text-4xl md:text-5xl font-bold font-cinzel text-white">{movie.movieTitle}</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <SeatMap />
         </div>
-    );
+        <div className="lg:col-span-1 bg-brand-card p-6 rounded-2xl border border-yellow-300/20">
+          <h2 className="font-cinzel text-2xl text-brand-gold mb-4">Your Selection</h2>
+          {/* Reservation form will go here */}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default ReservationsPage;
+// Build Date: 2025-09-16 01:08 PM
