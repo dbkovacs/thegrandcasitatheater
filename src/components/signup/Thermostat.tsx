@@ -1,5 +1,5 @@
 // src/components/signup/Thermostat.tsx
-import React, { useMemo } from 'react';
+import React, 'useMemo' from 'react';
 import { MovieNight } from '../../types';
 import ThermostatTooltip from './ThermostatTooltip';
 
@@ -11,7 +11,6 @@ interface ThermostatProps {
 
 const Thermostat: React.FC<ThermostatProps> = ({ value, onChange, historicalData }) => {
   
-  // Group historical data by temperature for quick lookup
   const historyByTemp = useMemo(() => {
     return historicalData.reduce((acc, movie) => {
       const temp = movie.thermostat;
@@ -32,11 +31,11 @@ const Thermostat: React.FC<ThermostatProps> = ({ value, onChange, historicalData
   const entriesForCurrentTemp = historyByTemp[value];
 
   return (
-    <div className="flex flex-col items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg p-6 h-full">
+    <div className="flex flex-col items-center justify-between bg-slate-900/50 border border-slate-700 rounded-lg p-4 sm:p-6 h-full">
       <div>
         <label className="text-center block text-sm font-medium text-slate-400">Set Theater Temp</label>
-        <p className="text-center text-xs text-slate-500 mb-4">(We'll do our best!)</p>
-        <div className="font-serif text-5xl font-bold text-brand-gold mb-4 text-center">{value}°F</div>
+        <p className="text-center text-xs text-slate-500 mb-2 sm:mb-4">(We'll do our best!)</p>
+        <div className="font-serif text-4xl sm:text-5xl font-bold text-brand-gold mb-4 text-center">{value}°F</div>
       </div>
       
       <div className="w-full relative">
@@ -64,4 +63,4 @@ const Thermostat: React.FC<ThermostatProps> = ({ value, onChange, historicalData
 };
 
 export default Thermostat;
-// Build Date: 2025-09-16 10:55 AM
+// Build Date: 2025-09-16 11:21 AM
