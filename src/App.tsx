@@ -10,7 +10,7 @@ import AdminPage from './AdminPage';
 function App() {
   return (
     <Router>
-      <div className="bg-brand-dark bg-ceiling-pattern bg-repeat bg-blend-overlay bg-white/5 min-h-screen text-white">
+      <div className="bg-brand-dark min-h-screen text-white">
         {/* Navigation Header */}
         <header className="bg-black/30 shadow-lg backdrop-blur-sm sticky top-0 z-50">
           <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -40,4 +40,4 @@ function App() {
 }
 
 export default App;
-// Build Date: 2025-09-16 10:15 AM
+// Build Date: 2025-09-16 10:20 AM

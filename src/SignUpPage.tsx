@@ -1,16 +1,36 @@
-// File: src/SignUpPage.tsx
+// src/SignUpPage.tsx
 import React, { useState } from 'react';
 import { db } from './firebase';
 import { collection, addDoc } from "firebase/firestore";
+import FormHeader from './components/signup/FormHeader';
+import TextInput from './components/ui/TextInput';
+import RadioGroup from './components/ui/RadioGroup'; // <-- IMPORT our new component
+
+// NOTE: Only the Thermostat is left as a placeholder.
+const Thermostat = ({ value, onChange }) => (
+    <div className="flex flex-col items-center justify-center bg-slate-900/50 border border-slate-700 rounded-lg p-6 h-full">
+        <label className="text-sm font-medium text-slate-400">Set Theater Temp</label>
+        <p className="text-xs text-slate-500 mb-4">(We'll do our best!)</p>
+        <div className="font-serif text-5xl font-bold text-brand-gold mb-4">{value}°F</div>
+        <input
+            type="range"
+            min="70"
+            max="80"
+            value={value}
+            onChange={onChange}
+            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-gold"
+        />
+    </div>
+);
+
 
 function SignUpPage() {
-    // State for all our new fields
     const [hostName, setHostName] = useState('');
     const [movieTitle, setMovieTitle] = useState('');
     const [audience, setAudience] = useState<'Kids Welcome' | 'Adults Only'>('Kids Welcome');
     const [greeting, setGreeting] = useState('');
     const [notesToDavid, setNotesToDavid] = useState('');
-    const [thermostat, setThermostat] = useState(74); // New default
+    const [thermostat, setThermostat] = useState(74);
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
@@ -43,6 +63,7 @@ function SignUpPage() {
             setGreeting('');
             setNotesToDavid('');
             setThermostat(74);
+            setTimeout(() => setMessage(''), 5000);
 
         } catch (error) {
             console.error("Error adding document: ", error);
@@ -53,69 +74,66 @@ function SignUpPage() {
     };
 
     return (
-        <div className="signup-page-container">
-            <div className="signup-header">
-                <h1 className="font-cinzel text-5xl">The Grand Casita Theater</h1>
-                <p>Create Your Perfect Movie Night</p>
-            </div>
+        <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+            <div className="w-full max-w-4xl">
+                <FormHeader />
 
-            <form onSubmit={handleSubmit} className="signup-form">
-                <div className="form-main-panel">
-                    {/* --- Left Side of Form --- */}
-                    <div className="form-fields">
-                        <label>Your Name</label>
-                        <input type="text" value={hostName} onChange={(e) => setHostName(e.target.value)} placeholder="e.g., Jane Doe" />
-
-                        <label>Movie Title</label>
-                        <input type="text" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} placeholder="e.g., The Princess Bride (1987)" />
+                <form onSubmit={handleSubmit} className="bg-brand-card border border-brand-gold/20 rounded-2xl shadow-2xl p-6 sm:p-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         
-                        <label>Audience</label>
-                        <div className="radio-group">
-                            <label className={audience === 'Kids Welcome' ? 'selected' : ''}>
-                                <input type="radio" value="Kids Welcome" checked={audience === 'Kids Welcome'} onChange={() => setAudience('Kids Welcome')} />
-                                Kids Welcome
-                            </label>
-                            <label className={audience === 'Adults Only' ? 'selected' : ''}>
-                                <input type="radio" value="Adults Only" checked={audience === 'Adults Only'} onChange={() => setAudience('Adults Only')} />
-                                Adults Only
-                            </label>
-                        </div>
-                        
-                        <label>Greeting for Your Guests</label>
-                        <textarea value={greeting} onChange={(e) => setGreeting(e.target.value)} placeholder="e.g., 'I grew up loving this movie, hope you join me!'" rows={4}></textarea>
-                    </div>
-
-                    {/* --- Right Side of Form (Thermostat) --- */}
-                    <div className="form-thermostat-panel">
-                        <label>Set Theater Temp</label>
-                        <p className="thermostat-subtitle">(We'll do our best!)</p>
-                        <div className="thermostat-display">{thermostat}°F</div>
-                        <div className="thermostat-slider-container">
-                             <input
-                                type="range"
-                                min="70"
-                                max="80"
-                                value={thermostat}
-                                onChange={(e) => setThermostat(parseInt(e.target.value))}
-                                className="thermostat-slider"
+                        <div className="md:col-span-2 flex flex-col gap-6">
+                            <TextInput
+                                label="Your Name"
+                                value={hostName}
+                                onChange={(e) => setHostName(e.target.value)}
+                                placeholder="e.g., Jane Doe"
+                            />
+                            <TextInput
+                                label="Movie Title"
+                                value={movieTitle}
+                                onChange={(e) => setMovieTitle(e.target.value)}
+                                placeholder="e.g., The Princess Bride (1987)"
+                            />
+                            <RadioGroup
+                                label="Audience"
+                                selectedValue={audience}
+                                options={['Kids Welcome', 'Adults Only']}
+                                onChange={setAudience}
+                            />
+                            <TextInput
+                                as="textarea"
+                                label="Greeting for Your Guests"
+                                value={greeting}
+                                onChange={(e) => setGreeting(e.target.value)}
+                                placeholder="e.g., 'I grew up loving this movie, hope you join me!'"
+                                rows={4}
                             />
                         </div>
+
+                        <div className="md:col-span-1">
+                            <Thermostat value={thermostat} onChange={(e) => setThermostat(parseInt(e.target.value))} />
+                        </div>
                     </div>
-                </div>
 
-                {/* --- Field moved to the bottom --- */}
-                <div className="form-bottom-field">
-                    <label>Notes to David (Optional)</label>
-                    <input type="text" value={notesToDavid} onChange={(e) => setNotesToDavid(e.target.value)} placeholder="e.g., 'Make sure it's the widescreen version!'" />
-                </div>
-
-                <button type="submit" disabled={isSubmitting} className="submit-button">
-                    {isSubmitting ? 'Submitting...' : 'Submit Movie Night'}
-                </button>
-                 {message && <p className="form-message">{message}</p>}
-            </form>
+                    <div className="mt-8 border-t border-slate-700 pt-8">
+                         <TextInput
+                            label="Notes to David (Optional)"
+                            value={notesToDavid}
+                            onChange={(e) => setNotesToDavid(e.target.value)}
+                            placeholder="e.g., 'Make sure it's the widescreen version!'"
+                        />
+                        <div className="mt-6">
+                            <button type="submit" disabled={isSubmitting} className="w-full btn-velvet text-lg">
+                                {isSubmitting ? 'Submitting...' : 'Submit Movie Night'}
+                            </button>
+                        </div>
+                        {message && <p className="text-center mt-4 text-brand-gold">{message}</p>}
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
 
 export default SignUpPage;
+// Build Date: 2025-09-16 10:22 AM
