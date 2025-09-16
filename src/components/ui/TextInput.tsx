@@ -1,7 +1,13 @@
 // src/components/ui/TextInput.tsx
 import React from 'react';
 
-const TextInput = ({ as = 'input', label, ...props }) => {
+// Define the props interface to ensure type safety
+interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+  as?: 'input' | 'textarea';
+  label: string;
+}
+
+const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) => {
   const commonClasses = "block w-full bg-slate-900/50 border border-slate-700 rounded-md shadow-sm py-2 px-3 text-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold transition";
   
   const InputComponent = as;
@@ -18,4 +24,4 @@ const TextInput = ({ as = 'input', label, ...props }) => {
 };
 
 export default TextInput;
-// Build Date: 2025-09-16 10:20 AM
+// Build Date: 2025-09-16 10:25 AM

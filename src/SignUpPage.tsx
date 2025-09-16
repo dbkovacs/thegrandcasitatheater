@@ -4,10 +4,10 @@ import { db } from './firebase';
 import { collection, addDoc } from "firebase/firestore";
 import FormHeader from './components/signup/FormHeader';
 import TextInput from './components/ui/TextInput';
-import RadioGroup from './components/ui/RadioGroup'; // <-- IMPORT our new component
+import RadioGroup from './components/ui/RadioGroup';
 
-// NOTE: Only the Thermostat is left as a placeholder.
-const Thermostat = ({ value, onChange }) => (
+// NOTE: Added types to the Thermostat placeholder props
+const Thermostat = ({ value, onChange }: { value: number; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <div className="flex flex-col items-center justify-center bg-slate-900/50 border border-slate-700 rounded-lg p-6 h-full">
         <label className="text-sm font-medium text-slate-400">Set Theater Temp</label>
         <p className="text-xs text-slate-500 mb-4">(We'll do our best!)</p>
@@ -104,7 +104,7 @@ function SignUpPage() {
                                 as="textarea"
                                 label="Greeting for Your Guests"
                                 value={greeting}
-                                onChange={(e) => setGreeting(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setGreeting(e.target.value)}
                                 placeholder="e.g., 'I grew up loving this movie, hope you join me!'"
                                 rows={4}
                             />
@@ -136,4 +136,4 @@ function SignUpPage() {
 }
 
 export default SignUpPage;
-// Build Date: 2025-09-16 10:22 AM
+// Build Date: 2025-09-16 10:25 AM
