@@ -1,6 +1,6 @@
 // src/components/signup/Thermostat.tsx
 import React, { useMemo } from 'react';
-import  MovieNight  from '../../types';
+import  { MovieNight } from '../../types';
 import ThermostatTooltip from './ThermostatTooltip';
 
 interface ThermostatProps {
