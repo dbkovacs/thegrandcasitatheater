@@ -1,6 +1,6 @@
 // src/InvitationPage.tsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { db } from './firebase';
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { MovieNight } from './types';
@@ -21,6 +21,7 @@ function InvitationPage() {
     const [error, setError] = useState<string | null>(null);
     const [isTrailerVisible, setIsTrailerVisible] = useState(false);
     const [isAdultsModalVisible, setIsAdultsModalVisible] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchActiveMovie = async () => {
@@ -57,9 +58,15 @@ function InvitationPage() {
     const handleReserveClick = () => {
         if (activeMovie?.audience === 'Adults Only') {
             setIsAdultsModalVisible(true);
-        } else {
-            // This will be a Link component in the final step
-            // For now, this logic path is unused as the button will be a Link
+        } else if (activeMovie) {
+            navigate(`/reservations/${activeMovie.id}`);
+        }
+    };
+
+    const confirmAgeAndProceed = () => {
+        setIsAdultsModalVisible(false);
+        if (activeMovie) {
+            navigate(`/reservations/${activeMovie.id}`);
         }
     };
     
@@ -86,11 +93,7 @@ function InvitationPage() {
             )}
             {isAdultsModalVisible && (
                 <AdultsOnlyModal 
-                    onConfirm={() => {
-                        // In a real app, you'd navigate here. For now, this is handled by the Link
-                        setIsAdultsModalVisible(false);
-                        window.location.href = reservationLink;
-                    }}
+                    onConfirm={confirmAgeAndProceed}
                     onCancel={() => setIsAdultsModalVisible(false)}
                 />
             )}
@@ -155,4 +158,4 @@ function InvitationPage() {
 }
 
 export default InvitationPage;
-// Build Date: 2025-09-16 01:25 PM
+// Build Date: 2025-09-16 01:35 PM
