@@ -6,6 +6,7 @@ import { doc, getDoc, collection, onSnapshot, addDoc } from 'firebase/firestore'
 import { MovieNight, Seat as SeatType, Reservation } from './types';
 import Seat from './components/reservations/Seat';
 import Button from './components/ui/Button';
+import TextInput from './components/ui/TextInput'; // <-- FIXED: Added missing import
 
 const generateSeats = (): SeatType[] => {
     const seats: SeatType[] = [];
@@ -28,11 +29,19 @@ function ReservationsPage() {
     const [allReservations, setAllReservations] = useState<Reservation[]>([]);
 
     useEffect(() => {
-        if (!movieId) return;
+        if (!movieId) {
+            setIsLoading(false);
+            return;
+        }
+
         const fetchMovie = async () => {
             const docRef = doc(db, 'movieNights', movieId);
             const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) setMovie({ id: docSnap.id, ...docSnap.data() } as MovieNight);
+            if (docSnap.exists()) {
+                setMovie({ id: docSnap.id, ...docSnap.data() } as MovieNight);
+            } else {
+                 console.error("No such movie found!");
+            }
         };
         fetchMovie();
 
@@ -42,14 +51,23 @@ function ReservationsPage() {
             const resList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reservation));
             setAllReservations(resList);
             resList.forEach(res => res.seatIds.forEach(id => reservedSeatIds.add(id)));
-            setSeats(currentSeats => currentSeats.map(seat => ({ ...seat, status: reservedSeatIds.has(seat.id) ? 'reserved' : 'available' })));
+            
+            setSeats(currentSeats => currentSeats.map(seat => ({
+                ...seat,
+                status: reservedSeatIds.has(seat.id) ? 'reserved' : 'available',
+            })));
             setIsLoading(false);
         });
+
         return () => unsubscribe();
     }, [movieId]);
     
     const handleSeatClick = useCallback((seatId: string) => {
-        setSelectedSeatIds(prev => prev.includes(seatId) ? prev.filter(id => id !== seatId) : [...prev, seatId]);
+        setSelectedSeatIds(prev =>
+            prev.includes(seatId)
+                ? prev.filter(id => id !== seatId)
+                : [...prev, seatId]
+        );
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -61,7 +79,10 @@ function ReservationsPage() {
         setIsSubmitting(true);
         setMessage('Confirming your reservation...');
         try {
-            await addDoc(collection(db, 'movieNights', movieId, 'reservations'), { name: name.trim(), seatIds: selectedSeatIds });
+            await addDoc(collection(db, 'movieNights', movieId, 'reservations'), {
+                name: name.trim(),
+                seatIds: selectedSeatIds,
+            });
             setMessage(`Success! Your seat${selectedSeatIds.length > 1 ? 's are' : ' is'} reserved.`);
             setSelectedSeatIds([]);
             setName('');
@@ -74,12 +95,20 @@ function ReservationsPage() {
         }
     };
 
-    if (isLoading) return <p className="text-center text-yellow-300/70 p-8">Loading Seating Chart...</p>;
-    if (!movie) return <p className="text-center text-red-400 p-8">Could not find movie details.</p>;
+    if (isLoading) return <p className="text-center text-yellow-300/70 p-8 text-lg animate-pulse">Loading Seating Chart...</p>;
+    if (!movie) return <p className="text-center text-red-400 p-8">Could not find movie details for this showing.</p>;
 
     const renderSeatRow = (rowSeats: SeatType[]) => (
         <div className="flex justify-center gap-2 md:gap-4">
-            {rowSeats.map(seat => <Seat key={seat.id} seat={seat} isSelected={selectedSeatIds.includes(seat.id)} onClick={handleSeatClick} isAisleSeat={seat.id === 'A4' || seat.id === 'B4' || seat.id === 'C3' || seat.id === 'D4'} />)}
+            {rowSeats.map(seat => (
+                <Seat 
+                    key={seat.id} 
+                    seat={seat} 
+                    isSelected={selectedSeatIds.includes(seat.id)}
+                    onClick={handleSeatClick} 
+                    isAisleSeat={seat.id === 'A4' || seat.id === 'B4' || seat.id === 'C3' || seat.id === 'D4'} 
+                />
+            ))}
         </div>
     );
 
@@ -98,9 +127,9 @@ function ReservationsPage() {
                         {renderSeatRow(seats.filter(s => s.id.startsWith('C')))}
                         {renderSeatRow(seats.filter(s => s.id.startsWith('D')))}
                     </div>
-                    <div className="flex flex-wrap gap-4 mt-6 text-sm text-slate-300">
-                        <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-md bg-slate-500"></span> Recliner</div>
+                    <div className="flex flex-wrap justify-center gap-4 mt-6 text-sm text-slate-300">
                         <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-slate-500"></span> Bean Bag</div>
+                        <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-md bg-slate-500"></span> Recliner</div>
                         <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-md bg-brand-gold"></span> Selected</div>
                         <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-md bg-slate-700"></span> Reserved</div>
                     </div>
@@ -110,7 +139,7 @@ function ReservationsPage() {
                         <h2 className="font-cinzel text-2xl text-brand-gold mb-4">Your Selection</h2>
                         <TextInput label="Your Name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" />
                         <div className="mt-4">
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Seats</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-1">Seats</e-label>
                             <div className="bg-slate-900/50 border border-slate-700 rounded-md p-3 min-h-[44px] text-slate-50">{selectedSeatIds.sort().join(', ') || <span className="text-slate-500">Select seats from the map</span>}</div>
                         </div>
                         <div className="mt-6"><Button type="submit" disabled={isSubmitting || !name || selectedSeatIds.length === 0}>{isSubmitting ? 'Reserving...' : 'Confirm Reservation'}</Button></div>
@@ -137,4 +166,4 @@ function ReservationsPage() {
 }
 
 export default ReservationsPage;
-// Build Date: 2025-09-16 02:25 PM
+// Build Date: 2025-09-16 02:30 PM
