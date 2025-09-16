@@ -25,7 +25,6 @@ function SignUpPage() {
         setMessage('Submitting your request...');
 
         try {
-            // Add the new fields to our Firebase document
             await addDoc(collection(db, "movieNights"), {
                 hostName,
                 movieTitle,
@@ -38,7 +37,6 @@ function SignUpPage() {
             });
 
             setMessage('Success! Your movie night has been submitted for review.');
-            // Reset form
             setHostName('');
             setMovieTitle('');
             setAudience('Kids Welcome');
@@ -71,9 +69,6 @@ function SignUpPage() {
                         <label>Movie Title</label>
                         <input type="text" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} placeholder="e.g., The Princess Bride (1987)" />
                         
-                        <label>Notes to David (Optional)</label>
-                        <input type="text" value={notesToDavid} onChange={(e) => setNotesToDavid(e.target.value)} placeholder="e.g., 'Make sure it's the widescreen version!'" />
-
                         <label>Audience</label>
                         <div className="radio-group">
                             <label className={audience === 'Kids Welcome' ? 'selected' : ''}>
@@ -106,6 +101,12 @@ function SignUpPage() {
                             />
                         </div>
                     </div>
+                </div>
+
+                {/* --- Field moved to the bottom --- */}
+                <div className="form-bottom-field">
+                    <label>Notes to David (Optional)</label>
+                    <input type="text" value={notesToDavid} onChange={(e) => setNotesToDavid(e.target.value)} placeholder="e.g., 'Make sure it's the widescreen version!'" />
                 </div>
 
                 <button type="submit" disabled={isSubmitting} className="submit-button">
