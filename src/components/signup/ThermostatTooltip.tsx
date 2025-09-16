@@ -1,6 +1,6 @@
 // src/components/signup/ThermostatTooltip.tsx
 import React from 'react';
-import { MovieNight } from '../../types';
+import  MovieNight  from '../../types';
 
 interface ThermostatTooltipProps {
   entries: MovieNight[];

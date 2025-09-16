@@ -6,7 +6,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { MovieNight } from '../../types';
 import  TextInput  from '../ui/TextInput';
 import  RadioGroup  from '../ui/RadioGroup';
-import  Button  from '../ui/Button';
+import { Button } from '../ui/Button';
 
 interface MovieEditorProps {
     movie: MovieNight;
