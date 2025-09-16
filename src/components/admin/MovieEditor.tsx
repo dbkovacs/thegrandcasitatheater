@@ -1,7 +1,7 @@
 // src/components/admin/MovieEditor.tsx
 import React, { useState, useEffect } from 'react';
 import { db, storage } from '../../firebase';
-import { doc, updateDoc, deleteDoc, collection, getDocs } from 'firebase/firestore'; // <-- FIXED IMPORTS
+import { doc, updateDoc, deleteDoc, collection, getDocs } from 'firebase/firestore'; // <-- FIXED: Added missing imports
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { MovieNight } from '../../types';
 import TextInput from '../ui/TextInput';
@@ -103,7 +103,7 @@ const MovieEditor: React.FC<MovieEditorProps> = ({ movie, onUpdate, onClose }) =
                 <form onSubmit={handleSave} className="space-y-4">
                     <TextInput label="Movie Title" name="movieTitle" value={formData.movieTitle} onChange={handleChange} />
                     <TextInput label="Host Name" name="hostName" value={formData.hostName} onChange={handleChange} />
-                    <TextInput as="textarea" label="Greeting Message" name="greeting" value={formData.greeting || ''} onChange={handleChange} placeholder="Optional greeting" />
+                    <TextInput as="textarea" rows={3} label="Greeting Message" name="greeting" value={formData.greeting || ''} onChange={handleChange} placeholder="Optional greeting" />
                     <TextInput label="Show Date" name="showDate" type="date" value={formData.showDate} onChange={handleChange} />
                     <TextInput label="Thermostat Preference" name="thermostat" type="number" value={formData.thermostat} onChange={handleChange} min="70" max="80" />
                     <TextInput label="Trailer Link" name="trailerLink" type="url" value={formData.trailerLink || ''} onChange={handleChange} placeholder="YouTube URL" />
@@ -121,7 +121,7 @@ const MovieEditor: React.FC<MovieEditorProps> = ({ movie, onUpdate, onClose }) =
                         <Button type="submit" disabled={isSaving}> {isSaving ? 'Saving...' : 'Save Changes'} </Button>
                         
                         <div className="flex items-center gap-4">
-                           <TextInput name="deleteConfirm" value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} placeholder={`Type "${movie.movieTitle}" to confirm`} className="flex-grow"/>
+                           <TextInput label="" name="deleteConfirm" value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} placeholder={`Type "${movie.movieTitle}" to confirm`} className="flex-grow"/>
                            <Button type="button" onClick={handleDelete} disabled={isDeleting || deleteConfirm !== movie.movieTitle} className="!w-auto bg-red-800 hover:bg-red-700">
                                {isDeleting ? 'Deleting...' : 'Delete'}
                            </Button>
@@ -134,4 +134,4 @@ const MovieEditor: React.FC<MovieEditorProps> = ({ movie, onUpdate, onClose }) =
 };
 
 export default MovieEditor;
-// Build Date: 2025-09-16 02:10 PM
+// Build Date: 2025-09-16 02:20 PM

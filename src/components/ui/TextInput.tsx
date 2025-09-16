@@ -4,8 +4,8 @@ import React from 'react';
 // Define the props interface to ensure type safety
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   as?: 'input' | 'textarea';
-  label: string;
-  rows?: number; // <-- ADD THIS LINE
+  label?: string; // <-- FIXED: Made label optional
+  rows?: number;
 }
 
 const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) => {
@@ -15,7 +15,7 @@ const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) 
 
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-400 mb-1">{label}</label>
+      {label && <label className="block text-sm font-medium text-slate-400 mb-1">{label}</label>}
       <InputComponent 
         {...props}
         className={commonClasses}
@@ -25,4 +25,4 @@ const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) 
 };
 
 export default TextInput;
-// Build Date: 2025-09-16 10:31 AM
+// Build Date: 2025-09-16 02:25 PM
