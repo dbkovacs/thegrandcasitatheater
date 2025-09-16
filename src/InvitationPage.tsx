@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { db } from './firebase';
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import { MovieNight } from './types';
+import { collection, query, where, getDocs, orderBy, onSnapshot } from "firebase/firestore";
+import { MovieNight, Reservation } from './types';
 import TrailerModal from './components/invitation/TrailerModal';
 import AdultsOnlyModal from './components/invitation/AdultsOnlyModal';
 import CalendarIcon from './CalendarIcon';
@@ -21,23 +21,24 @@ function InvitationPage() {
     const [error, setError] = useState<string | null>(null);
     const [isTrailerVisible, setIsTrailerVisible] = useState(false);
     const [isAdultsModalVisible, setIsAdultsModalVisible] = useState(false);
+    const [reservations, setReservations] = useState<Reservation[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchActiveMovie = async () => {
             setIsLoading(true);
             try {
-                const q = query(collection(db, "movieNights"), where("status", "==", "Approved"), orderBy("showDate", "desc"));
+                const q = query(collection(db, "movieNights"), where("status", "==", "Approved"), orderBy("showDate", "asc"));
                 const querySnapshot = await getDocs(q);
                 const moviesList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
                 
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
-                const futureMovies = moviesList.filter(m => new Date(m.showDate + 'T00:00:00') >= today);
-                const sortedFutureMovies = futureMovies.sort((a, b) => new Date(a.showDate).getTime() - new Date(b.showDate).getTime());
-
-                setActiveMovie(sortedFutureMovies.length > 0 ? sortedFutureMovies[0] : null);
+                const upcomingMovies = moviesList.filter(m => new Date(m.showDate + 'T00:00:00') >= today);
+                const currentActiveMovie = upcomingMovies.length > 0 ? upcomingMovies[0] : null;
+                
+                setActiveMovie(currentActiveMovie);
             } catch (err) {
                 console.error("Error fetching movie: ", err);
                 setError("Could not load the invitation. Please try again later.");
@@ -47,6 +48,21 @@ function InvitationPage() {
         };
         fetchActiveMovie();
     }, []);
+
+    useEffect(() => {
+        if (!activeMovie) {
+            setReservations([]);
+            return;
+        }
+
+        const reservationsCol = collection(db, 'movieNights', activeMovie.id, 'reservations');
+        const unsubscribe = onSnapshot(reservationsCol, (snapshot) => {
+            const resList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reservation));
+            setReservations(resList);
+        });
+
+        return () => unsubscribe();
+    }, [activeMovie]);
 
     const getYoutubeEmbedUrl = (url: string | undefined) => {
         if (!url) return '';
@@ -70,25 +86,19 @@ function InvitationPage() {
         }
     };
     
-    if (isLoading) {
-        return <p className="text-center text-yellow-300/70 p-8 text-lg animate-pulse">Loading Invitation...</p>;
-    }
-
-    if (error) {
-        return <p className="text-center text-red-400 p-8">{error}</p>;
-    }
-
-    if (!activeMovie) {
-        return (
-            <div className="container mx-auto px-4 py-8 text-center">
-                <div className="bg-brand-card shadow-2xl rounded-2xl border-2 border-yellow-300/20 p-8">
-                    <h1 className="text-4xl font-cinzel text-brand-gold mb-4">No Upcoming Showings</h1>
-                    <p className="text-slate-300">There are currently no movie nights scheduled. Check back soon!</p>
-                </div>
+    if (isLoading) return <p className="text-center text-yellow-300/70 p-8 text-lg animate-pulse">Loading Invitation...</p>;
+    if (error) return <p className="text-center text-red-400 p-8">{error}</p>;
+    if (!activeMovie) return (
+        <div className="container mx-auto px-4 py-8 text-center">
+            <div className="bg-brand-card shadow-2xl rounded-2xl border-2 border-yellow-300/20 p-8">
+                <h1 className="text-4xl font-cinzel text-brand-gold mb-4">No Upcoming Showings</h1>
+                <p className="text-slate-300">There are currently no movie nights scheduled. Check back soon!</p>
             </div>
-        );
-    }
+        </div>
+    );
     
+    const reservationLink = `/reservations/${activeMovie.id}`;
+
     return (
         <>
             {isTrailerVisible && activeMovie.trailerLink && (
@@ -146,13 +156,37 @@ function InvitationPage() {
                             </div>
                         </div>
                         
+                        {reservations.length > 0 && (
+                            <>
+                                <div className="my-6 border-t border-yellow-300/20"></div>
+                                <h3 className="text-3xl font-cinzel text-brand-gold mb-4">Who's Coming?</h3>
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-300 max-h-48 overflow-y-auto pr-2">
+                                    {reservations
+                                        .sort((a, b) => a.name.localeCompare(b.name))
+                                        .map((res, index) => (
+                                        <li key={index} className="bg-black/20 p-3 rounded-lg flex items-center gap-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-300/70" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                            </svg>
+                                            <p className="font-semibold">{res.name} ({res.seatIds.length} seat{res.seatIds.length !== 1 ? 's' : ''})</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+                        
                         <div className="mt-8 pt-8 border-t border-yellow-300/20 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <button onClick={() => setIsTrailerVisible(true)} className="btn-velvet" disabled={!activeMovie.trailerLink}>
                                 Watch Trailer
                             </button>
-                            <button onClick={handleReserveClick} className="btn-velvet primary">
+                            <Link to={reservationLink} onClick={(e) => {
+                                if (activeMovie.audience === 'Adults Only') {
+                                    e.preventDefault();
+                                    handleReserveClick();
+                                }
+                            }} className="btn-velvet primary text-center flex items-center justify-center">
                                 Reserve Seat
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -162,4 +196,4 @@ function InvitationPage() {
 }
 
 export default InvitationPage;
-// Build Date: 2025-09-16 01:40 PM
+// Build Date: 2025-09-16 01:55 PM

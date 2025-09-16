@@ -1,164 +1,139 @@
-// File: src/AdminPage.tsx
+// src/AdminPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { db, storage } from './firebase';
-import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { MovieNight } from './types'; // Import our blueprint
+import { db } from './firebase';
+import { collection, query, where, getDocs, orderBy, updateDoc, doc } from "firebase/firestore";
+import { MovieNight } from './types';
+import MovieEditor from './components/admin/MovieEditor'; // <-- Import MovieEditor
+
+interface PendingMovieItemProps {
+    movie: MovieNight;
+    onActionComplete: () => void;
+    onEdit: (movie: MovieNight) => void; // New prop to open editor
+}
+
+// Re-defining PendingMovieItem for AdminPage for a cleaner layout
+const PendingMovieItem: React.FC<PendingMovieItemProps> = ({ movie, onActionComplete, onEdit }) => {
+    return (
+        <div className="bg-brand-card p-4 rounded-lg border border-brand-gold/20 flex justify-between items-center">
+            <div>
+                <h3 className="text-xl font-cinzel text-white truncate">{movie.movieTitle}</h3>
+                <p className="text-sm text-slate-400">Requested by: {movie.hostName}</p>
+            </div>
+            <div className="flex gap-2">
+                <button onClick={() => onEdit(movie)} className="btn-velvet text-xs px-3 py-1">Edit</button>
+                {/* Approve/Reject logic will be handled via the editor now,
+                    but you could add quick approve/reject buttons here if desired. */}
+            </div>
+        </div>
+    );
+};
+
 
 function AdminPage() {
-    // FIX: Apply the MovieNight blueprint to our state
     const [pendingMovies, setPendingMovies] = useState<MovieNight[]>([]);
     const [approvedMovies, setApprovedMovies] = useState<MovieNight[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [editingMovie, setEditingMovie] = useState<MovieNight | null>(null); // State for movie being edited
 
-    // FIX: Define types for uploader state
-    const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [isUploading, setIsUploading] = useState(false);
+    const fetchMovies = useCallback(async () => {
+        setIsLoading(true);
+        const pendingQuery = query(collection(db, "movieNights"), where("status", "==", "Pending Review"), orderBy("submittedAt", "asc"));
+        const approvedQuery = query(collection(db, "movieNights"), where("status", "==", "Approved"), orderBy("showDate", "desc"));
+
+        const [pendingSnapshot, approvedSnapshot] = await Promise.all([getDocs(pendingQuery), getDocs(approvedQuery)]);
+        const pendingList = pendingSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
+        const approvedList = approvedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
+
+        setPendingMovies(pendingList);
+        setApprovedMovies(approvedList);
+        setIsLoading(false);
+    }, []);
 
     useEffect(() => {
-        const fetchMovies = async () => {
-            setLoading(true);
-            try {
-                const pendingQuery = query(collection(db, "movieNights"), where("status", "==", "Pending Review"));
-                const approvedQuery = query(collection(db, "movieNights"), where("status", "==", "Approved"));
-
-                const [pendingSnapshot, approvedSnapshot] = await Promise.all([getDocs(pendingQuery), getDocs(approvedQuery)]);
-
-                const pendingList = pendingSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
-                const approvedList = approvedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
-
-                setPendingMovies(pendingList);
-                setApprovedMovies(approvedList);
-                setError(null);
-            } catch (err) {
-                console.error("Error fetching movies: ", err);
-                setError("Failed to fetch movie night data.");
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchMovies();
-    }, []);
+    }, [fetchMovies]);
 
-    // FIX: Add type for the movieId parameter
-    const handleApprove = async (movieId: string) => {
-        /* Your approve logic here */
-    };
-    
-    // FIX: Add type for the files parameter
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        if (acceptedFiles.length > 0) {
-            setSelectedFile(acceptedFiles[0]);
+    const handleReorderApproved = async (movieId: string, direction: 'up' | 'down') => {
+        // This is a simplified reordering for display.
+        // For persistent reordering, you'd need a 'sortOrder' field in Firestore
+        // and update multiple documents.
+        const currentApproved = [...approvedMovies];
+        const index = currentApproved.findIndex(m => m.id === movieId);
+        if (index === -1) return;
+
+        let newIndex = index;
+        if (direction === 'up' && index > 0) newIndex = index - 1;
+        if (direction === 'down' && index < currentApproved.length - 1) newIndex = index + 1;
+
+        if (newIndex !== index) {
+            const [reorderedMovie] = currentApproved.splice(index, 1);
+            currentApproved.splice(newIndex, 0, reorderedMovie);
+            setApprovedMovies(currentApproved);
+
+            // To make this persistent, you'd update a 'sortOrder' field in Firestore
+            // on the affected movies and re-fetch, or simply update state if display order is enough.
+            // For now, it's a visual reorder.
+            // A more robust solution would involve updating two documents' sortOrder fields.
+            alert('Reordering is currently visual only. For persistent reordering, a "sortOrder" field and database updates are needed.');
         }
-    }, []);
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        accept: { 'image/*': ['.jpeg', '.png', '.gif', '.webp'] },
-        multiple: false
-    });
-
-    const handleUpload = () => {
-        if (!selectedFile || !selectedMovieId) {
-            alert("Please select a movie and a file first.");
-            return;
-        }
-        setIsUploading(true);
-        setUploadProgress(0);
-
-        const storageRef = ref(storage, `posters/${selectedMovieId}/${selectedFile.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, selectedFile);
-
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setUploadProgress(progress);
-            },
-            (error) => {
-                console.error("Upload failed: ", error);
-                alert("Upload failed.");
-                setIsUploading(false);
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-                    const movieDocRef = doc(db, "movieNights", selectedMovieId);
-                    await updateDoc(movieDocRef, { posterURL: downloadURL });
-                    
-                    setApprovedMovies(movies => movies.filter(m => m.id !== selectedMovieId));
-                    setSelectedFile(null);
-                    setIsUploading(false);
-                    setSelectedMovieId(null);
-                });
-            }
-        );
     };
 
-    const selectedMovieInfo = approvedMovies.find(m => m.id === selectedMovieId);
 
-    // ... The rest of your JSX should now work because TypeScript knows the types ...
     return (
-        <div className="container mx-auto p-8">
+        <div className="container mx-auto p-4 md:p-8">
             <h1 className="text-4xl font-cinzel text-brand-gold mb-8 text-center">Admin Dashboard</h1>
-            {/* The JSX for pending movies, etc. */}
-            <div className="bg-brand-card p-6 rounded-2xl shadow-2xl border-2 border-yellow-300/20">
-                <h2 className="text-2xl font-cinzel text-brand-gold mb-4">Add Movie Poster</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Column 1: List of Approved Movies */}
-                    <div>
-                        <h3 className="text-lg font-cinzel text-yellow-300/80 mb-2">1. Select an Approved Movie</h3>
-                        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-                           {(approvedMovies.filter(m => !m.posterURL).length > 0) ? (
-                                approvedMovies.filter(m => !m.posterURL).map(movie => (
-                                <div
-                                    key={movie.id}
-                                    onClick={() => setSelectedMovieId(movie.id)}
-                                    className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedMovieId === movie.id ? 'bg-brand-gold text-black' : 'bg-black/20 hover:bg-black/40'}`}
-                                >
-                                    <p className="font-bold">{movie.movieTitle}</p>
-                                    <p className="text-xs">{movie.showDate}</p>
-                                </div>
-                                ))
-                           ) : (
-                                <p className="text-yellow-300/70 p-3 bg-black/20 rounded-lg">No approved movies need a poster.</p>
-                           )}
-                        </div>
-                    </div>
+            
+            {editingMovie && (
+                <MovieEditor 
+                    movie={editingMovie}
+                    onUpdate={fetchMovies}
+                    onClose={() => setEditingMovie(null)}
+                />
+            )}
 
-                    {/* Column 2: The Uploader */}
-                    <div>
-                        <h3 className="text-lg font-cinzel text-yellow-300/80 mb-2">2. Upload the Poster</h3>
-                        <div {...getRootProps()} className={`border-4 border-dashed rounded-lg p-8 text-center transition-colors ${!selectedMovieId ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-brand-gold'} ${isDragActive ? 'border-brand-gold bg-black/20' : 'border-yellow-300/30'}`}>
-                            <input {...getInputProps()} disabled={!selectedMovieId} />
-                            {selectedFile ? (
-                                <p>{selectedFile.name}</p>
-                            ) : (
-                                <p>{isDragActive ? 'Drop the file here...' : 'Drag & drop or click to select'}</p>
-                            )}
-                        </div>
-
-                        {selectedFile && selectedMovieId && (
-                            <div className="mt-4 text-center">
-                                {isUploading ? (
-                                    <div>
-                                        <p>Uploading for "{selectedMovieInfo?.movieTitle}"...</p>
-                                        <div className="w-full bg-black/30 rounded-full h-2.5 mt-2">
-                                            <div className="bg-brand-gold h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <button onClick={handleUpload} className="btn-velvet">Upload Poster</button>
-                                )}
-                            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Pending Reviews Column */}
+                <section>
+                    <h2 className="text-2xl font-cinzel text-yellow-300/80 mb-4">Pending Review ({pendingMovies.length})</h2>
+                    <div className="space-y-6">
+                        {isLoading ? <p>Loading...</p> : pendingMovies.length > 0 ? (
+                            pendingMovies.map(movie => (
+                                <PendingMovieItem key={movie.id} movie={movie} onActionComplete={fetchMovies} onEdit={setEditingMovie} />
+                            ))
+                        ) : (
+                            <p className="text-slate-400">No movies are currently pending review.</p>
                         )}
                     </div>
-                </div>
+                </section>
+
+                {/* Approved Movies Column */}
+                <section>
+                    <h2 className="text-2xl font-cinzel text-yellow-300/80 mb-4">Approved Movies ({approvedMovies.length})</h2>
+                     <div className="space-y-4">
+                        {isLoading ? <p>Loading...</p> : approvedMovies.length > 0 ? (
+                            approvedMovies.map(movie => (
+                                <div key={movie.id} className="bg-brand-card/50 p-3 rounded-lg flex items-center gap-4 group">
+                                    <img src={movie.posterURL} alt={movie.movieTitle} className="w-12 h-16 object-cover rounded"/>
+                                    <div className="flex-grow">
+                                        <p className="font-bold text-white">{movie.movieTitle}</p>
+                                        <p className="text-xs text-slate-300">{movie.showDate}</p>
+                                    </div>
+                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => setEditingMovie(movie)} className="btn-velvet text-xs px-3 py-1">Edit</button>
+                                        <button onClick={() => handleReorderApproved(movie.id, 'up')} className="btn-velvet text-xs px-3 py-1">↑</button>
+                                        <button onClick={() => handleReorderApproved(movie.id, 'down')} className="btn-velvet text-xs px-3 py-1">↓</button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-slate-400">No movies have been approved yet.</p>
+                        )}
+                    </div>
+                </section>
             </div>
         </div>
     );
 }
 
 export default AdminPage;
+// Build Date: 2025-09-16 01:50 PM

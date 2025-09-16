@@ -4,9 +4,10 @@ import { db } from './firebase';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { MovieNight } from './types';
 import FormHeader from './components/signup/FormHeader';
+import Thermostat from './components/signup/Thermostat';
 import TextInput from './components/ui/TextInput';
 import RadioGroup from './components/ui/RadioGroup';
-import Thermostat from './components/signup/Thermostat';
+import Button from './components/ui/Button'; // <-- Final component imported
 
 function SignUpPage() {
     const [hostName, setHostName] = useState('');
@@ -71,6 +72,7 @@ function SignUpPage() {
 
                 <form onSubmit={handleSubmit} className="bg-brand-card border border-brand-gold/20 rounded-2xl shadow-2xl p-6 sm:p-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        
                         <div className="md:col-span-2 flex flex-col gap-6">
                             <TextInput
                                 label="Your Name"
@@ -117,9 +119,9 @@ function SignUpPage() {
                             placeholder="e.g., 'Make sure it's the widescreen version!'"
                         />
                         <div className="mt-6">
-                            <button type="submit" disabled={isSubmitting} className="w-full btn-velvet text-lg">
+                            <Button type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? 'Submitting...' : 'Submit Movie Night'}
-                            </button>
+                            </Button>
                         </div>
                         {message && <p className="text-center mt-4 text-brand-gold">{message}</p>}
                     </div>
@@ -130,4 +132,4 @@ function SignUpPage() {
 }
 
 export default SignUpPage;
-// Build Date: 2025-09-16 10:55 AM
+// Build Date: 2025-09-16 11:10 AM
