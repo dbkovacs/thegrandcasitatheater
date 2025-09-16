@@ -5,6 +5,7 @@ import React from 'react';
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   as?: 'input' | 'textarea';
   label: string;
+  rows?: number; // <-- ADD THIS LINE
 }
 
 const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) => {
@@ -24,4 +25,4 @@ const TextInput: React.FC<TextInputProps> = ({ as = 'input', label, ...props }) 
 };
 
 export default TextInput;
-// Build Date: 2025-09-16 10:25 AM
+// Build Date: 2025-09-16 10:31 AM

@@ -1,7 +1,15 @@
 // src/components/ui/RadioGroup.tsx
 import React from 'react';
 
-const RadioGroup = ({ label, selectedValue, options, onChange }) => {
+// Use a generic type 'T' to make the component more flexible and type-safe
+interface RadioGroupProps<T extends string> {
+  label: string;
+  selectedValue: T;
+  options: T[];
+  onChange: (value: T) => void;
+}
+
+const RadioGroup = <T extends string>({ label, selectedValue, options, onChange }: RadioGroupProps<T>) => {
   return (
     <div>
       <label className="block text-sm font-medium text-slate-400 mb-2">{label}</label>
@@ -26,4 +34,4 @@ const RadioGroup = ({ label, selectedValue, options, onChange }) => {
 };
 
 export default RadioGroup;
-// Build Date: 2025-09-16 10:22 AM
+// Build Date: 2025-09-16 10:31 AM
