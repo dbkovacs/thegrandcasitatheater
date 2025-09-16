@@ -5,7 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MovieNight } from './types';
 import TextInput from './components/ui/TextInput'; // Reusing our components
-import Button from './components/ui/Button';
+import { Button } from './components/ui/Button';
 
 interface PendingMovieItemProps {
     movie: MovieNight;

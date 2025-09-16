@@ -5,7 +5,7 @@ import { db } from './firebase';
 import { doc, getDoc, collection, onSnapshot, addDoc } from 'firebase/firestore';
 import { MovieNight, Seat as SeatType, Reservation } from './types';
 import Seat from './components/reservations/Seat';
-import Button from './components/ui/Button';
+import { Button } from './components/ui/Button';
 import TextInput from './components/ui/TextInput';
 
 const generateSeats = (): SeatType[] => {

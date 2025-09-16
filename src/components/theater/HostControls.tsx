@@ -1,9 +1,15 @@
-// src/components/theater/HostControls.jsx
+// src/components/theater/HostControls.tsx
 import React from 'react';
-import { Button } from '../ui/Button'; // CORRECTED PATH
+import { Button } from '../ui/Button';
 import { SlidersHorizontal } from 'lucide-react';
 
-const HostControls = ({ hostName, thermostat }) => {
+// Define the types for the component's props
+interface HostControlsProps {
+  hostName: string;
+  thermostat: number;
+}
+
+const HostControls: React.FC<HostControlsProps> = ({ hostName, thermostat }) => {
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/80 rounded-2xl p-6 shadow-lg h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
@@ -24,11 +30,11 @@ const HostControls = ({ hostName, thermostat }) => {
       </div>
       
       <p className="text-xs text-gray-600 text-right font-mono mt-4">
-        Build Date: 2025-09-16 02:43 PM
+        Build Date: 2025-09-16 03:11 PM
       </p>
     </div>
   );
 };
 
 export default HostControls;
-// Build Date: 2025-09-16 02:43 PM
+// Build Date: 2025-09-16 03:11 PM

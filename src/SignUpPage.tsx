@@ -7,7 +7,7 @@ import FormHeader from './components/signup/FormHeader';
 import Thermostat from './components/signup/Thermostat';
 import TextInput from './components/ui/TextInput';
 import RadioGroup from './components/ui/RadioGroup';
-import Button from './components/ui/Button'; // <-- Final component imported
+import { Button } from './components/ui/Button'; // <-- Final component imported
 
 function SignUpPage() {
     const [hostName, setHostName] = useState('');
