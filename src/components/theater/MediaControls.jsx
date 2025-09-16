@@ -1,20 +1,17 @@
 // src/components/theater/MediaControls.jsx
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/Button'; // CORRECTED PATH
 import { Play, Info } from 'lucide-react';
 
 const MediaControls = ({ media }) => {
-  // Destructure for easier access
   const { title, description, imageUrl, durationMinutes, rating } = media;
 
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/80 rounded-2xl shadow-lg overflow-hidden h-full flex flex-col">
-      {/* Media Image */}
       <div className="aspect-video w-full overflow-hidden">
         <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
       </div>
 
-      {/* Media Content */}
       <div className="p-6 flex-grow flex flex-col">
         <div className="flex items-baseline gap-4 mb-2">
           <h1 className="text-3xl font-bold text-white">{title}</h1>
@@ -28,7 +25,6 @@ const MediaControls = ({ media }) => {
           {description}
         </p>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-4">
           <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold flex-grow sm:flex-grow-0">
             <Play className="mr-2 h-5 w-5" />
@@ -41,11 +37,11 @@ const MediaControls = ({ media }) => {
         </div>
       </div>
        <p className="text-xs text-gray-600 text-right font-mono p-2">
-        Build Date: 2025-09-16 02:30 PM
+        Build Date: 2025-09-16 02:43 PM
       </p>
     </div>
   );
 };
 
 export default MediaControls;
-// Build Date: 2025-09-16 02:30 PM
+// Build Date: 2025-09-16 02:43 PM

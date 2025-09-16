@@ -1,6 +1,6 @@
 // src/components/theater/HostControls.jsx
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/Button'; // CORRECTED PATH
 import { SlidersHorizontal } from 'lucide-react';
 
 const HostControls = ({ hostName, thermostat }) => {
@@ -24,11 +24,11 @@ const HostControls = ({ hostName, thermostat }) => {
       </div>
       
       <p className="text-xs text-gray-600 text-right font-mono mt-4">
-        Build Date: 2025-09-16 02:24 PM
+        Build Date: 2025-09-16 02:43 PM
       </p>
     </div>
   );
 };
 
 export default HostControls;
-// Build Date: 2025-09-16 02:24 PM
+// Build Date: 2025-09-16 02:43 PM

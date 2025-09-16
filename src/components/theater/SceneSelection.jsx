@@ -1,9 +1,8 @@
 // src/components/theater/SceneSelection.jsx
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/Button'; // CORRECTED PATH
 import { Play } from 'lucide-react';
 
-// In a real app, this data would come from props or an API
 const scenes = [
   { id: 1, name: 'Arrival on Arrakis', timestamp: '0:12:35' },
   { id: 2, name: 'The Spice Harvest', timestamp: '0:42:15' },
@@ -31,11 +30,11 @@ const SceneSelection = () => {
         ))}
       </ul>
       <p className="text-xs text-gray-600 text-right font-mono mt-4">
-        Build Date: 2025-09-16 02:32 PM
+        Build Date: 2025-09-16 02:43 PM
       </p>
     </div>
   );
 };
 
 export default SceneSelection;
-// Build Date: 2025-09-16 02:32 PM
+// Build Date: 2025-09-16 02:43 PM
