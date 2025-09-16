@@ -1,5 +1,5 @@
 // src/components/signup/Thermostat.tsx
-import React, 'useMemo' from 'react';
+import React, { useMemo } from 'react';
 import { MovieNight } from '../../types';
 import ThermostatTooltip from './ThermostatTooltip';
 
@@ -63,4 +63,4 @@ const Thermostat: React.FC<ThermostatProps> = ({ value, onChange, historicalData
 };
 
 export default Thermostat;
-// Build Date: 2025-09-16 11:21 AM
+// Build Date: 2025-09-16 11:30 AM
