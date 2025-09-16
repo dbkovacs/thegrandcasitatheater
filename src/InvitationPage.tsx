@@ -3,19 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { MovieNight } from './types';
-
-// --- Placeholder Components (we will create these next) ---
-const TrailerModal = ({ trailerUrl, onClose }) => (
-    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-        <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl w-full max-w-4xl relative border-2 border-yellow-300/50">
-            <button onClick={onClose} className="absolute top-2 right-4 text-white text-4xl hover:text-gray-400 z-10">&times;</button>
-            <div className="relative pb-[56.25%] h-0">
-                <iframe src={trailerUrl} title="YouTube video player" frameBorder="0" allow="autoplay; encrypted-media;" allowFullScreen className="absolute top-0 left-0 w-full h-full"></iframe>
-            </div>
-        </div>
-    </div>
-);
-// --- End Placeholder Components ---
+import TrailerModal from './components/invitation/TrailerModal'; // <-- IMPORT a real component
 
 function InvitationPage() {
     const [activeMovie, setActiveMovie] = useState<MovieNight | null>(null);
@@ -31,9 +19,10 @@ function InvitationPage() {
                 const querySnapshot = await getDocs(q);
                 const moviesList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MovieNight));
                 
-                // For now, we'll assume the most recent upcoming movie is the "active" one.
-                // We can add more complex logic later if needed.
-                const futureMovies = moviesList.filter(m => new Date(m.showDate) >= new Date());
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const futureMovies = moviesList.filter(m => new Date(m.showDate + 'T00:00:00') >= today);
                 const sortedFutureMovies = futureMovies.sort((a, b) => new Date(a.showDate).getTime() - new Date(b.showDate).getTime());
 
                 setActiveMovie(sortedFutureMovies.length > 0 ? sortedFutureMovies[0] : null);
@@ -49,8 +38,8 @@ function InvitationPage() {
 
     const getYoutubeEmbedUrl = (url: string | undefined) => {
         if (!url) return '';
-        // Add autoplay for a better modal experience
-        const videoId = url.split('/').pop()?.split('?')[0];
+        const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : '';
         return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
     };
 
@@ -83,7 +72,6 @@ function InvitationPage() {
             )}
             <div className="container mx-auto px-4 py-8 md:py-12">
                 <div className="max-w-4xl mx-auto bg-brand-card shadow-2xl rounded-2xl overflow-hidden border-2 border-yellow-300/20">
-                    {/* Poster Section */}
                     <div className="bg-black/20 p-4 md:p-8 text-center">
                         <img 
                             src={activeMovie.posterURL || `https://placehold.co/600x900/2a0000/fde047?text=${encodeURIComponent(activeMovie.movieTitle)}`} 
@@ -92,7 +80,6 @@ function InvitationPage() {
                         />
                     </div>
 
-                    {/* Details Section */}
                     <div className="p-8 md:p-12">
                         <p className="text-xl text-brand-gold font-semibold mb-2 font-cinzel">You're Invited By</p>
                         <h1 className="text-5xl font-bold mb-4 font-cinzel text-shadow">{activeMovie.hostName}</h1>
@@ -113,7 +100,7 @@ function InvitationPage() {
                                 <span className="font-semibold">{activeMovie.showDate}</span>
                             </div>
                              {activeMovie.audience && (
-                                <div className={`flex items-center gap-2 p-2 rounded-md text-sm ${
+                                <div className={`inline-flex items-center gap-2 p-2 rounded-md text-sm font-semibold ${
                                     activeMovie.audience === 'Adults Only' ? 'bg-red-900/30 text-red-300' : 'bg-green-900/30 text-green-300'
                                 }`}>
                                     <span>{activeMovie.audience}</span>
@@ -137,4 +124,4 @@ function InvitationPage() {
 }
 
 export default InvitationPage;
-// Build Date: 2025-09-16 11:40 AM
+// Build Date: 2025-09-16 12:50 PM
