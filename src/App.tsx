@@ -1,5 +1,4 @@
-// File: src/App.jsx
-// This file is now the main router for the application.
+// src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
@@ -11,17 +10,17 @@ import AdminPage from './AdminPage';
 function App() {
   return (
     <Router>
-      <div className="bg-brand-dark min-h-screen text-white">
+      <div className="bg-brand-dark bg-ceiling-pattern bg-repeat bg-blend-overlay bg-white/5 min-h-screen text-white">
         {/* Navigation Header */}
-        <header className="bg-black/30 shadow-lg">
+        <header className="bg-black/30 shadow-lg backdrop-blur-sm sticky top-0 z-50">
           <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-            <Link to="/" className="text-2xl font-cinzel text-brand-gold font-bold">
+            <Link to="/" className="text-2xl font-serif text-brand-gold font-bold tracking-wider">
               The Grand Casita Theater
             </Link>
-            <div className="space-x-4">
-              <Link to="/" className="text-yellow-300/80 hover:text-white transition">Home</Link>
-              <Link to="/signup" className="text-yellow-300/80 hover:text-white transition">Host a Night</Link>
-              <Link to="/admin" className="text-yellow-300/80 hover:text-white transition">Admin</Link>
+            <div className="space-x-6">
+              <Link to="/" className="text-yellow-300/80 hover:text-white transition font-semibold">Home</Link>
+              <Link to="/signup" className="text-yellow-300/80 hover:text-white transition font-semibold">Host a Night</Link>
+              <Link to="/admin" className="text-yellow-300/80 hover:text-white transition font-semibold">Admin</Link>
             </div>
           </nav>
         </header>
@@ -41,4 +40,4 @@ function App() {
 }
 
 export default App;
-// END - 2025-09-15 04:15 PM
+// Build Date: 2025-09-16 10:15 AM
