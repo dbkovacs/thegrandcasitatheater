@@ -6,7 +6,7 @@ import { doc, getDoc, collection, onSnapshot, addDoc } from 'firebase/firestore'
 import { MovieNight, Seat as SeatType, Reservation } from './types';
 import Seat from './components/reservations/Seat';
 import Button from './components/ui/Button';
-import TextInput from './components/ui/TextInput'; // <-- FIXED: Added missing import
+import TextInput from './components/ui/TextInput';
 
 const generateSeats = (): SeatType[] => {
     const seats: SeatType[] = [];
@@ -139,7 +139,7 @@ function ReservationsPage() {
                         <h2 className="font-cinzel text-2xl text-brand-gold mb-4">Your Selection</h2>
                         <TextInput label="Your Name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" />
                         <div className="mt-4">
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Seats</e-label>
+                            <label className="block text-sm font-medium text-slate-400 mb-1">Seats</label>
                             <div className="bg-slate-900/50 border border-slate-700 rounded-md p-3 min-h-[44px] text-slate-50">{selectedSeatIds.sort().join(', ') || <span className="text-slate-500">Select seats from the map</span>}</div>
                         </div>
                         <div className="mt-6"><Button type="submit" disabled={isSubmitting || !name || selectedSeatIds.length === 0}>{isSubmitting ? 'Reserving...' : 'Confirm Reservation'}</Button></div>
@@ -166,4 +166,4 @@ function ReservationsPage() {
 }
 
 export default ReservationsPage;
-// Build Date: 2025-09-16 02:30 PM
+// Build Date: 2025-09-16 02:35 PM
