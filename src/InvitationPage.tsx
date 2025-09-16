@@ -62,7 +62,7 @@ function InvitationPage() {
             navigate(`/reservations/${activeMovie.id}`);
         }
     };
-
+    
     const confirmAgeAndProceed = () => {
         setIsAdultsModalVisible(false);
         if (activeMovie) {
@@ -70,19 +70,25 @@ function InvitationPage() {
         }
     };
     
-    if (isLoading) return <p className="text-center text-yellow-300/70 p-8">Loading invitation...</p>;
-    if (error) return <p className="text-center text-red-400 p-8">{error}</p>;
-    if (!activeMovie) return (
-        <div className="container mx-auto px-4 py-8 text-center">
-            <div className="bg-brand-card shadow-2xl rounded-2xl border-2 border-yellow-300/20 p-8">
-                <h1 className="text-4xl font-cinzel text-brand-gold mb-4">No Upcoming Showings</h1>
-                <p className="text-slate-300">There are currently no movie nights scheduled. Check back soon!</p>
-            </div>
-        </div>
-    );
-    
-    const reservationLink = `/reservations/${activeMovie.id}`;
+    if (isLoading) {
+        return <p className="text-center text-yellow-300/70 p-8 text-lg animate-pulse">Loading Invitation...</p>;
+    }
 
+    if (error) {
+        return <p className="text-center text-red-400 p-8">{error}</p>;
+    }
+
+    if (!activeMovie) {
+        return (
+            <div className="container mx-auto px-4 py-8 text-center">
+                <div className="bg-brand-card shadow-2xl rounded-2xl border-2 border-yellow-300/20 p-8">
+                    <h1 className="text-4xl font-cinzel text-brand-gold mb-4">No Upcoming Showings</h1>
+                    <p className="text-slate-300">There are currently no movie nights scheduled. Check back soon!</p>
+                </div>
+            </div>
+        );
+    }
+    
     return (
         <>
             {isTrailerVisible && activeMovie.trailerLink && (
@@ -144,11 +150,9 @@ function InvitationPage() {
                             <button onClick={() => setIsTrailerVisible(true)} className="btn-velvet" disabled={!activeMovie.trailerLink}>
                                 Watch Trailer
                             </button>
-                            {activeMovie.audience === 'Adults Only' ? (
-                                <button onClick={handleReserveClick} className="btn-velvet primary">Reserve Seat</button>
-                            ) : (
-                                <Link to={reservationLink} className="btn-velvet primary">Reserve Seat</Link>
-                            )}
+                            <button onClick={handleReserveClick} className="btn-velvet primary">
+                                Reserve Seat
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -158,4 +162,4 @@ function InvitationPage() {
 }
 
 export default InvitationPage;
-// Build Date: 2025-09-16 01:35 PM
+// Build Date: 2025-09-16 01:40 PM
