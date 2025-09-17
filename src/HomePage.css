@@ -1,0 +1,154 @@
+/* File: src/HomePage.css */
+
+.page-message {
+    text-align: center;
+    color: #fde047; /* text-brand-gold */
+    padding: 2rem;
+    font-size: 1.25rem;
+}
+
+.upcoming-list-condensed {
+    margin-top: 1rem;
+    color: #cbd5e1; /* slate-300 */
+}
+
+.upcoming-item-condensed {
+    padding: 0.5rem;
+    border-bottom: 1px solid #334155; /* slate-700 */
+}
+
+.trailer-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.trailer-modal-content {
+    position: relative;
+    width: 80vw;
+    height: calc(80vw * 9 / 16); /* 16:9 aspect ratio */
+    max-width: 1200px;
+    max-height: calc(1200px * 9 / 16);
+}
+
+.trailer-close-button {
+    position: absolute;
+    top: -2rem;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+}
+
+.active-movie-hero {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5rem 2rem;
+    min-height: 80vh;
+}
+
+.poster-column {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px; /* Adjust as needed */
+}
+
+.poster-column img {
+    max-height: 600px;
+    width: auto;
+    border-radius: 8px;
+}
+
+.details-column {
+    flex: 1;
+    padding: 2rem;
+    text-align: center;
+    color: white;
+}
+
+.details-column h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.details-column h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: #fde047; /* text-brand-gold */
+}
+
+.host-byline {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.showing-on {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+.cta-buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.upcoming-section {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.upcoming-section h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.upcoming-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.upcoming-item {
+    background-color: #1E293B; /* slate-800 */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.upcoming-item img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+.upcoming-details {
+    padding: 1rem;
+}
+
+.build-date {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #64748B; /* slate-500 */
+  padding: 1rem;
+}
