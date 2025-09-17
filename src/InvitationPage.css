@@ -1,0 +1,22 @@
+/* File: src/InvitationPage.css */
+.invitation-hero {
+  background-image: url('https://firebasestorage.googleapis.com/v0/b/thegrandcasitatheater.firebasestorage.app/o/posters%2FGemini_Generated_Image_Movie_Poster_Frame_and_Logo.png?alt=media&token=2c4c64e1-2a15-4634-91a3-467eb5a15276');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 85vh; /* Adjust as needed */
+  padding: 2rem;
+}
+
+.invitation-poster {
+  width: 100%;
+  max-width: 350px; /* Adjust based on the frame's inner dimensions */
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px; /* Optional: if you want rounded corners inside the frame */
+  margin-top: -15%; /* Adjust this to position the poster correctly within the frame */
+}

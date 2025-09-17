@@ -1,7 +1,6 @@
 // src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
 import InvitationPage from './InvitationPage';
 import ReservationsPage from './ReservationsPage';
 import SignUpPage from './SignUpPage';
@@ -17,8 +16,7 @@ function App() {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/invitation" element={<InvitationPage />} />
+            <Route path="/" element={<InvitationPage />} />
             <Route path="/reservations/:movieId" element={<ReservationsPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/admin" element={<AdminAuth />} />
@@ -32,5 +30,5 @@ function App() {
 }
 
 export default App;
-// Updated App.tsx to use React Router and display the HomePage by default.
-// END - 2025-09-17 10:05 AM
+// Updated routing: InvitationPage is now the home page. Removed old HomePage route.
+// END - 2025-09-17 10:10 AM
